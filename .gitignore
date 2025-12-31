@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+.vscode
 
 # Virtual environments and environments
 .venv
@@ -12,3 +13,7 @@ wheels/
 
 
 Z_rough_work.canvas 
+uv.lock
+tasks.json
+/*.lock
+/*.toml
