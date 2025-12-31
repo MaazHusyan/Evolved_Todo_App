@@ -1,4 +1,0 @@
-Ok we start making a prompt for constitutions to set whole project guide lines.
-
-  1- always use mcp context7 to get latest info and usage guide for required tech or tool or software to avoid disasters
-  2-  
