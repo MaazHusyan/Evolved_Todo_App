@@ -1,82 +1,68 @@
-# Tasks: Phase I - Decoupled Todo CLI Engine
+# Tasks: Phase 1.1 - Persistent & Intelligent Todo App
 
 **Input**: Design documents from `/specs/001-phase-1-todo-cli/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), data-model.md
+**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md
 
-**Tests**: Tests are explicitly mandated by the constitution and plan (TDD approach).
+**Tests**: This phase introduces regression tests for new engine features and persistence verification.
 
-## Phase 1: Setup (Shared Infrastructure)
+## Phase 1: Setup (Environment & IDE Support)
 
-**Purpose**: Project initialization and basic structure
+**Purpose**: Fix path resolution and ensure professional DX
 
-- [ ] T001 Create project structure (`src/core`, `src/cli`, `src/repositories`) per implementation plan
-- [ ] T002 Configure `pytest` and `pytest-asyncio` in `pyproject.toml`
-- [ ] T003 [P] Configure `ruff` for linting and formatting in `pyproject.toml`
+- [X] T001 Create root-level `main.py` entry point (delegates to `src/cli/main.py`)
+- [X] T002 [P] Create `.vscode/settings.json` with `python.analysis.extraPaths`
+- [X] T003 [P] Create `.vscode/launch.json` for unified debugging with `PYTHONPATH`
+- [X] T004 Add `aiofiles` dependency via `uv add aiofiles`
 
----
+## Phase 2: Foundational (Storage & Data Models)
 
-## Phase 2: Foundational (Blocking Prerequisites)
+**Purpose**: Infrastructure that supports intermediate features and persistence
 
-**Purpose**: Core infrastructure for Decoupled architecture
+- [X] T005 Update `Priority` Enum and `Task` model with `tags` and `due_date` in `src/core/models.py`
+- [X] T006 Implement `JSONTaskRepository` with async atomic writes in `src/repositories/json_repo.py`
+- [X] T007 [P] Create unit tests for `JSONTaskRepository` in `tests/test_persistence.py`
 
-- [ ] T004 Create Pydantic domain models in `src/core/models.py` (UUID, validation)
-- [ ] T005 [P] Define custom exceptions in `src/core/exceptions.py`
-- [ ] T006 Implement abstract `TaskRepository` interface in `src/repositories/base.py` (Async)
-- [ ] T007 Implement `InMemoryTaskRepository` in `src/repositories/memory.py`
-- [ ] T008 [P] Implement `TaskEngine` business logic orchestrator in `src/core/engine.py` (Async)
+**Checkpoint**: Core persistence and updated data structure ready for business logic expansion.
 
-**Checkpoint**: Foundation ready - Core logic is fully testable and decoupled from CLI.
+## Phase 3: User Story 1 - Advanced Querying (Priority: P1) 🎯 MVP
 
----
+**Goal**: Implement Search, Filter, and Sort logic in the engine
 
-## Phase 3: User Story 1 - Core Task Lifecycle (Priority: P1) 🎯 MVP
-
-**Goal**: Implement CLI commands for Add, View, Update, Delete, and Toggle operations.
-
-**Independent Test**: Use `uv run src/cli/main.py` to create a task, view it, toggle its status, and delete it.
+**Independent Test**: Use the Engine directly to find tasks by keyword, filter by priority, and sort results.
 
 ### Tests for User Story 1
-
-- [ ] T009 [P] [US1] Unit tests for `TaskEngine` CRUD operations in `tests/test_engine.py`
-- [ ] T010 [P] [US1] Unit tests for `InMemoryTaskRepository` in `tests/test_repository.py`
+- [X] T008 [P] [US1] Create unit tests for search/filter/sort in `tests/test_engine_advanced.py`
 
 ### Implementation for User Story 1
+- [X] T009 [US1] Update `TaskEngine` with `list_tasks` filtering and sorting parameters in `src/core/engine.py`
+- [X] T010 [US1] Implement `search_tasks` keyword scanning in `src/core/engine.py`
 
-- [ ] T011 [US1] Create Typer CLI entry point in `src/cli/main.py`
-- [ ] T012 [US1] Implement 'Add' command in `src/cli/main.py`
-- [ ] T013 [US1] Implement 'View' command in `src/cli/main.py`
-- [ ] T014 [US1] Implement 'Update' command in `src/cli/main.py`
-- [ ] T015 [US1] Implement 'Delete' command in `src/cli/main.py`
-- [ ] T016 [US1] Implement 'Toggle' command in `src/cli/main.py`
-- [ ] T017 [US1] Add robust error handling to CLI commands in `src/cli/main.py`
+## Phase 4: User Story 2 - Interactive Experience (Priority: P2)
 
-**Checkpoint**: User Story 1 (MVP) is fully functional and testable independently.
+**Goal**: Implement a stateful REPL loop for seamless app usage
 
----
+**Independent Test**: Run `python main.py shell` and perform multiple operations without exiting.
 
-## Phase 4: Polish & Cross-Cutting Concerns
+- [X] T011 [US2] Implement REPL loop logic in `src/cli/shell.py`
+- [X] T012 [US2] Integrate `shell` command into the main Typer app in `src/cli/main.py`
+- [X] T013 [US2] Create summary dashboard view using Rich in `src/cli/shell.py`
+- [X] T014 [US2] Update existing CLI commands (`add`, `list`) to support priority/tags flags.
 
-- [ ] T018 [P] Update `README.md` with usage instructions and setup guide
-- [ ] T019 Run final `ruff` check and fix any styling issues
-- [ ] T020 Run full test suite and verify 100% pass rate
-- [ ] T021 Validate `quickstart.md` steps
+## Phase 5: Polish & Validation
+
+- [X] T015 Verify persistence survives app restarts
+- [X] T016 Run final `ruff` lint and format check
+- [X] T017 Validate `quickstart.md` usage scenarios
 
 ---
 
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
-
 - **Setup (Phase 1)**: No dependencies.
-- **Foundational (Phase 2)**: Depends on Phase 1. Blocks Phase 3.
-- **User Story 1 (Phase 3)**: Depends on Phase 2 completion.
-- **Polish (Phase 4)**: Final stage.
+- **Foundational (Phase 2)**: Depends on Phase 1 completion.
+- **User Stories (Phase 3+)**: Depend on Foundational phase completion.
 
----
-
-## Implementation Strategy
-
-### MVP First
-1. Complete Setup and Foundational Core logic.
-2. Implement CLI commands for US1.
-3. Validate via CLI demo.
+### Parallel Opportunities
+- VS Code configs (T002, T003) can run in parallel.
+- Persistence tests (T007) and Advanced tests (T008) can run in parallel.

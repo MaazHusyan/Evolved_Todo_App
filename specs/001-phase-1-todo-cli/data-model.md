@@ -1,46 +1,60 @@
-# Data Model: Phase I - Decoupled Todo Engine
+# Data Model: Phase 1.1 - Persistent & Intelligent Todo App
 
 ## Entities
 
-### Todo
-Represents a single task in the system. Validated via Pydantic v2.
+### Todo (Updated)
+Represents a single task in the system with intermediate organizational metadata.
 
 | Field | Type | Description | Validation |
 |-------|------|-------------|------------|
 | `id` | `UUID` | Unique identifier | Auto-generated (UUID v4) |
-| `title` | `str` | Task summary | `min_length: 1`, `max_length: 255` |
-| `description` | `Optional[str]` | Detailed notes | `max_length: 2000` |
+| `title` | `str` | Task summary | `min_length: 1`, `max_length: 100` |
+| `description` | `str` | Detailed notes | Default: `""` |
+| `priority` | `Priority` | Urgency level | Default: `MEDIUM` (Enum: `LOW`, `MEDIUM`, `HIGH`) |
+| `tags` | `list[str]` | Organizational labels | Default: `[]`, Case-insensitive, Deduplicated |
 | `is_completed` | `bool` | Status flag | Default: `False` |
-| `created_at` | `datetime` | Creation timestamp | Auto-generated |
-| `updated_at` | `datetime` | Last updated timestamp | Auto-generated |
+| `due_date` | `Optional[datetime]` | Completion deadline | Placeholder for future Phase |
+
+### Priority (Enum)
+- `LOW`
+- `MEDIUM`
+- `HIGH`
 
 ## Interfaces (Contracts)
 
-### ITaskRepository (Protocol/Abstract Base)
-Defines the persistence contract for todo management.
+### ITaskRepository (No Change Required)
+The existing interface supports all operations. Implementation will switch to `JSONTaskRepository`.
 
-```python
-class ITaskRepository(Protocol):
-    async def add(self, todo: Todo) -> None: ...
-    async def get_by_id(self, todo_id: UUID) -> Optional[Todo]: ...
-    async def get_all(self) -> List[Todo]: ...
-    async def update(self, todo: Todo) -> None: ...
-    async def delete(self, todo_id: UUID) -> None: ...
-```
-
-### ITaskEngine
-Defines the business logic orchestrator.
+### ITaskEngine (Updated)
+Business logic expanded for search, filtering, and sorting.
 
 ```python
 class ITaskEngine(Protocol):
-    async def create_task(self, title: str, description: Optional[str]) -> Todo: ...
-    async def list_tasks(self) -> List[Todo]: ...
-    async def update_task(self, todo_id: UUID, title: Optional[str], description: Optional[str]) -> Todo: ...
-    async def delete_task(self, todo_id: UUID) -> None: ...
-    async def toggle_completion(self, todo_id: UUID) -> Todo: ...
+    # Existing methods...
+
+    async def list_tasks(
+        self,
+        status: Optional[bool] = None,
+        priority: Optional[Priority] = None,
+        tag: Optional[str] = None,
+        sort_by: Optional[str] = None  # ["alpha", "priority"]
+    ) -> List[Todo]: ...
+
+    async def search_tasks(self, keyword: str) -> List[Todo]: ...
 ```
 
-## State Transitions
-- **Created**: `is_completed` is `False`.
-- **Toggled**: `is_completed` flips between `True` and `False`.
-- **Deleted**: Entry removed from the repository.
+## Storage Schema (JSON)
+Tasks will be stored in `tasks.json` as a dictionary keyed by string UUID.
+
+```json
+{
+  "uuid-string": {
+    "id": "...",
+    "title": "...",
+    "description": "...",
+    "priority": "medium",
+    "tags": ["work", "home"],
+    "is_completed": false
+  }
+}
+```

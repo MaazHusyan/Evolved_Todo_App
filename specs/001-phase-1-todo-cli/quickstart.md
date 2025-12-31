@@ -1,4 +1,4 @@
-# Quickstart: Phase I - Decoupled Todo CLI
+# Quickstart: Phase 1.1 - Persistent & Interactive Todo CLI
 
 ## Prerequisites
 - Python 3.13+
@@ -7,17 +7,39 @@
 ## Setup
 1. Install dependencies:
    ```bash
-   uv sync
+   uv sync --group dev
    ```
-2. Run the application:
-   ```bash
-   uv run src/cli/main.py --help
-   ```
+
+2. Configuration (Auto-handled by implementation):
+   - A root-level `main.py` is available for unified execution.
+   - VS Code is pre-configured via `.vscode/` settings for the "Run" button.
+
+## Usage
+
+### 1. Unified Execution (fixes paths)
+```bash
+python main.py
+```
+
+### 2. Standard CLI Mode
+```bash
+# Add with Priority and Tags
+python main.py add "Fix Bug" --priority high --tag work --tag bug
+
+# Search for tasks
+python main.py search "bug"
+
+# List with filters
+python main.py list --priority high --filter-status incomplete
+```
+
+### 3. Interactive REPL Mode
+```bash
+python main.py shell
+```
+Inside the shell, use commands like `add`, `list`, `toggle`, `delete` without prepending `python main.py`.
 
 ## Development Commands
 - **Run Tests**: `uv run pytest`
-- **Add Dependency**: `uv add <package>`
 - **Linting**: `uv run ruff check .`
-
-## Architecture Note
-This application is decoupled. The core logic in `src/core` can be imported and used independently of the CLI interface.
+- **Formatting**: `uv run ruff format .`

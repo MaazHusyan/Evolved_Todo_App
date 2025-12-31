@@ -1,60 +1,66 @@
-# Implementation Plan: Phase I - Decoupled Todo Engine
+# Implementation Plan: Phase 1.1 - Persistent & Intelligent Todo App
 
 **Branch**: `001-phase-1-todo-cli` | **Date**: 2025-12-31 | **Spec**: [specs/001-phase-1-todo-cli/spec.md]
-**Input**: Feature specification from `/specs/001-phase-1-todo-cli/spec.md`
 
 ## Summary
-Building a modular, evolutionary Todo CLI engine in Python 3.13. The architecture uses an abstract Repository pattern and a decoupled engine to ensure Phase 2 (FastAPI/SQLModel) readiness.
+Building on the Phase I foundation to evolve the Todo CLI into a professional persistent application. This phase introduces JSON-based persistence, organizational metadata (Priorities, Tags), advanced querying (Search, Filter, Sort), and an interactive REPL mode while fixing environment path issues for VS Code.
 
 ## Technical Context
 - **Language/Version**: Python 3.13+
-- **Primary Dependencies**: `typer` (CLI), `pydantic` (validation)
-- **Storage**: In-memory (via `InMemoryTaskRepository`)
+- **Primary Dependencies**: `typer`, `pydantic`, `rich`, `aiofiles` (New)
+- **Storage**: JSON File (`JSONTaskRepository`)
 - **Testing**: `pytest` + `pytest-asyncio`
 - **Target Platform**: WSL 2 / Linux
-- **Project Type**: CLI Application with decoupled Core Engine
-- **Performance Goals**: Sub-millisecond in-memory operations
+- **Performance Goals**: Atomic writes for data safety
 - **Constraints**: 100% Async Core, 100% Logic/CLI isolation
 
 ## Constitution Check
-- [x] **Context7 Safety**: Verified Typer and Pydantic v2 patterns via Context7.
-- [x] **Phase Alignment**: Implementation uses only Phase 1 tech (Python, UV, CLI).
-- [x] **Presentation Agnostic**: Core logic resides in `core/` and knows nothing of Typer.
-- [x] **Async-First**: All Engine and Repository methods are `async`.
-- [x] **Tool-Centric**: Engine methods are designed as modular tools for future MCP exposure.
-- [x] **Zero-Knowledge**: Validated Repository pattern and Typer sub-app structure via live docs.
+- [x] **Context7 Safety**: Verified `aiofiles` and `Rich` prompt patterns.
+- [x] **Phase Alignment**: Remains in Phase I (CLI & Logic).
+- [x] **Presentation Agnostic**: Core logic expanded in `src/core`, independent of CLI/Shell interface.
+- [x] **Async-First**: All file I/O implemented with `aiofiles`.
+- [x] **Tool-Centric**: Engine methods remain modular and independently testable.
+- [x] **Zero-Knowledge**: Validated Typer interactive loop and Pydantic v2 enum patterns.
 
 ## Project Structure
 
 ### Documentation (this feature)
 ```text
 specs/001-phase-1-todo-cli/
-├── spec.md
-├── plan.md
-├── research.md
-├── data-model.md
-├── quickstart.md
-└── tasks.md
+├── spec.md              # Requirements
+├── plan.md              # This file
+├── research.md          # Persistent storage and REPL research
+├── data-model.md        # Updated entities (Priorities, Tags)
+├── quickstart.md        # Instructions for Interactive mode
+└── tasks.md             # Actionable roadmap
 ```
 
 ### Source Code
 ```text
-src/
-├── core/
-│   ├── models.py        # Pydantic entities
-│   ├── engine.py        # Business logic orchestrator
-│   └── exceptions.py    # Custom domain exceptions
-├── repositories/
-│   ├── base.py          # Abstract TaskRepository interface
-│   └── memory.py        # InMemoryTaskRepository implementation
-└── cli/
-    └── main.py          # Typer CLI entry point
+/
+├── main.py              # NEW: Root entry point
+├── .vscode/             # NEW: IDE configurations
+│   ├── settings.json
+│   └── launch.json
+├── src/
+│   ├── core/
+│   │   ├── models.py     # Updated: Priority, Tags, DueDate
+│   │   ├── engine.py     # Updated: Search, Filter, Sort
+│   │   └── exceptions.py
+│   ├── repositories/
+│   │   ├── base.py
+│   │   ├── memory.py
+│   │   └── json_repo.py  # NEW: JSON Persistence
+│   └── cli/
+│       ├── main.py       # Updated: Advanced commands
+│       └── shell.py      # NEW: Interactive REPL Loop
+└── tasks.json           # Application data
 ```
 
-**Structure Decision**: Using a single project structure optimized for separation of concerns. `src/core` is the "Brain" and `src/cli` is the "Mouth".
-
 ## Complexity Tracking
+
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| Repository Pattern | Forward compatibility | Direct dict access lacks clean swap-ability for SQLModel in Phase 2. |
-| Async Logic | Future-proofing | Sync logic would require total rewrite for Phase 2 FastAPI/Dapr. |
+| JSON Repository | Persistence | In-memory loses state; SQLite is Phase II. |
+| Root main.py | Path resolution | Fixes VS Code ModuleNotFoundError universally. |
+| Async File I/O | Concurrency | Blocking I/O would hang the CLI/Shell during writes. |
