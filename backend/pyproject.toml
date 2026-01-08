@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "todo-backend"
+version = "0.1.0"
+description = "Backend for the multi-user todo web application"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.32.0",
+    "sqlmodel>=0.0.24",
+    "pydantic>=2.10.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.20",
+    "alembic>=1.14.0",
+    "sqlalchemy>=2.0.36",
+    "aiosqlite>=0.20.0",
+    "python-dotenv>=1.0.1",
+    "httpx>=0.28.0",
+    "pyjwt>=2.10.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "black>=24.10.0",
+    "isort>=5.13.2",
+    "mypy>=1.13.0",
+    "flake8>=7.1.0",
+    "pre-commit>=4.0.1"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "black>=24.10.0",
+    "isort>=5.13.2",
+    "mypy>=1.13.0",
+    "flake8>=7.1.0",
+    "pre-commit>=4.0.1"
+]

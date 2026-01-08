@@ -210,4 +210,9 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
 
 ## Recent Changes
+- 002-todo-full-stack: Added Python 3.13+ (backend), TypeScript/JavaScript (frontend), SQL for Neon PostgreSQL + FastAPI (backend), Next.js 16+ (frontend), SQLModel (ORM), Better Auth (authentication), Neon Serverless PostgreSQL (database)
 - 001-phase-1-todo-cli: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+
+## Active Technologies
+- Python 3.13+ (backend), TypeScript/JavaScript (frontend), SQL for Neon PostgreSQL + FastAPI (backend), Next.js 16+ (frontend), SQLModel (ORM), Better Auth (authentication), Neon Serverless PostgreSQL (database) (002-todo-full-stack)
+- Neon Serverless PostgreSQL database with SQLModel ORM (002-todo-full-stack)
