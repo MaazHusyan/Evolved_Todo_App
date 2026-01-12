@@ -45,6 +45,23 @@ All I/O operations (file, network, database) must be `async`. Every core functio
 ### VI. Zero-Knowledge Assumption
 The agent must verify every implementation detail against live documentation via Context7. Any implementation that contradicts verified documentation must be flagged immediately. This principle eliminates "hallucination-driven development" and ensures the project uses the most secure and performant patterns available.
 
+## Additional Constitution Areas
+
+### VII. Skill Creation Constitution
+- Define rules for creating, validating, and evolving skills
+- Specify boundaries, responsibilities, and extension rules
+- Enforce consistency and reuse
+
+### VIII. Personalized Agent Constitution
+- Define how personalized agents are created and managed
+- Specify data boundaries, behavior constraints, and customization rules
+- Prevent uncontrolled agent behavior
+
+### IX. Test-Driven Development (TDD) Constitution
+- Define mandatory TDD workflow
+- Specify test types, order of implementation, and acceptance criteria
+- Define failure handling and refactoring rules
+
 ## Technical Invariants & Standards
 
 - **Dependency Management**: Use `UV` exclusively for Python. Direct use of `pip` or `venv` is prohibited.
@@ -67,4 +84,17 @@ The agent must verify every implementation detail against live documentation via
     - MINOR: New principles or significant technical expansions.
     - PATCH: Wording, typos, or minor clarifications.
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-31 | **Last Amended**: 2025-12-31
+<!--Sync Impact Report
+-Version change: 1.0.0 -> 1.1.0
+-List of modified principles (old title -> new title if renamed):
+    - None
+-Added sections: Additional Constitution Areas (Skill Creation, Personalized Agent, TDD)
+-Removed sections: None
+-Templates requiring updates (✅ updated / ⚠ pending) with file paths:
+    - .specify/templates/plan-template.md (⚠ pending)
+    - .specify/templates/spec-template.md (⚠ pending)
+    - .specify/templates/tasks-template.md (⚠ pending)
+-Follow-up TODOs if any placeholders intentionally deferred: Update templates to reflect new principles
+-->
+
+**Version**: 1.1.0 | **Ratified**: 2025-12-31 | **Last Amended**: 2026-01-09
