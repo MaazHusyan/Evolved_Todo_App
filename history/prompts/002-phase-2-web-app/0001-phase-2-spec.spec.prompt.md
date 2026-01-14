@@ -5,21 +5,21 @@ stage: spec
 date: 2026-01-09
 surface: agent
 model: claude-sonnet-4-5-20250929
-feature: 001-phase-2-web-app
-branch: 001-phase-2-web-app
+feature: 002-phase-2-web-app
+branch: 002-phase-2-web-app
 user: maaz
 command: "/sp.specify keep current branch or if create new keep the same name OBJECTIVE: Produce complete, enforceable specifications for Phase II of a Todo Full-Stack Web Application."
 labels: ["specification", "web-app", "authentication", "api", "todo"]
 links:
-  spec: specs/001-phase-2-web-app/spec.md
+  spec: specs/002-phase-2-web-app/spec.md
   ticket: null
   adr: null
   pr: null
 files:
-  - specs/001-phase-2-web-app/spec.md
-  - specs/001-phase-2-web-app/checklists/requirements.md
+  - specs/002-phase-2-web-app/spec.md
+  - specs/002-phase-2-web-app/checklists/requirements.md
 tests:
-  - specs/001-phase-2-web-app/checklists/requirements.md
+  - specs/002-phase-2-web-app/checklists/requirements.md
 ---
 
 ## Prompt

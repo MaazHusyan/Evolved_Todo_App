@@ -1,6 +1,6 @@
 # Feature Specification: Phase II - Todo Full-Stack Web Application
 
-**Feature Branch**: `001-phase-2-web-app`
+**Feature Branch**: `002-phase-2-web-app`
 **Created**: 2026-01-09
 **Status**: Draft
 **Input**: User description: "keep current branch or if create new keep the same name

@@ -1,9 +1,9 @@
 # Implementation Tasks: Phase II - Todo Full-Stack Web Application
 
-**Feature**: 001-phase-2-web-app
+**Feature**: 002-phase-2-web-app
 **Generated**: 2026-01-09
-**Spec**: specs/001-phase-2-web-app/spec.md
-**Plan**: specs/001-phase-2-web-app/plan.md
+**Spec**: specs/002-phase-2-web-app/spec.md
+**Plan**: specs/002-phase-2-web-app/plan.md
 
 ## Overview
 

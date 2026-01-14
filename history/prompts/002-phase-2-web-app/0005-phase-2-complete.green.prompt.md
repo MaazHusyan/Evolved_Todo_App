@@ -5,15 +5,15 @@ stage: green
 date: 2026-01-09
 surface: agent
 model: claude-sonnet-4-5-20250929
-feature: 001-phase-2-web-app
-branch: 001-phase-2-web-app
+feature: 002-phase-2-web-app
+branch: 002-phase-2-web-app
 user: maaz
 command: "/sp.implement"
 labels: ["implementation", "full-stack", "web-app", "authentication", "api", "database"]
 links:
-  spec: specs/001-phase-2-web-app/spec.md
-  plan: specs/001-phase-2-web-app/plan.md
-  tasks: specs/001-phase-2-web-app/tasks.md
+  spec: specs/002-phase-2-web-app/spec.md
+  plan: specs/002-phase-2-web-app/plan.md
+  tasks: specs/002-phase-2-web-app/tasks.md
   ticket: null
   adr: null
   pr: null
