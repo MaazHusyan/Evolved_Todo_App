@@ -5,24 +5,24 @@ stage: plan
 date: 2026-01-09
 surface: agent
 model: claude-sonnet-4-5-20250929
-feature: 001-phase-2-web-app
-branch: 001-phase-2-web-app
+feature: 002-phase-2-web-app
+branch: 002-phase-2-web-app
 user: maaz
 command: "/sp.plan"
 labels: ["planning", "architecture", "web-app", "api", "authentication"]
 links:
-  spec: specs/001-phase-2-web-app/spec.md
+  spec: specs/002-phase-2-web-app/spec.md
   ticket: null
   adr: null
   pr: null
 files:
-  - specs/001-phase-2-web-app/plan.md
-  - specs/001-phase-2-web-app/research.md
-  - specs/001-phase-2-web-app/data-model.md
-  - specs/001-phase-2-web-app/quickstart.md
-  - specs/001-phase-2-web-app/contracts/todo-api.yaml
+  - specs/002-phase-2-web-app/plan.md
+  - specs/002-phase-2-web-app/research.md
+  - specs/002-phase-2-web-app/data-model.md
+  - specs/002-phase-2-web-app/quickstart.md
+  - specs/002-phase-2-web-app/contracts/todo-api.yaml
 tests:
-  - specs/001-phase-2-web-app/checklists/requirements.md
+  - specs/002-phase-2-web-app/checklists/requirements.md
 ---
 
 ## Prompt

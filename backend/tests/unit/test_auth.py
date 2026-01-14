@@ -1,6 +1,8 @@
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, create_engine
+from sqlmodel import SQLModel
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel.pool import StaticPool
 from sqlmodel.ext.asyncio.session import AsyncSession
 from unittest.mock import patch, AsyncMock
@@ -18,20 +20,28 @@ from src.models.base import get_async_session, SessionDep, create_db_and_tables
 from src.auth.utils import create_access_token, verify_token
 
 
-@pytest.fixture(scope="function")
-def engine():
+@pytest_asyncio.fixture(scope="function")
+async def engine():
     # Create an in-memory SQLite database for testing
-    engine = create_engine(
-        "sqlite:///:memory:",
+    # Use sqlite+aiosqlite for async engine
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    SQLModel.metadata.create_all(bind=engine)
-    return engine
+
+    # Create tables
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+
+    yield engine
+
+    # Cleanup
+    await engine.dispose()
 
 
-@pytest.fixture(scope="function")
-def client(engine):
+@pytest_asyncio.fixture(scope="function")
+async def client(engine):
     # Mock the startup event to prevent actual database connection
     original_on_event = app.router.on_event
 
@@ -53,7 +63,8 @@ def client(engine):
     app.router.on_event = original_on_event
 
 
-def test_register_endpoint(client):
+@pytest.mark.asyncio
+async def test_register_endpoint(client):
     """Test user registration endpoint"""
     registration_data = {
         "email": "test@example.com",
@@ -70,7 +81,8 @@ def test_register_endpoint(client):
     assert data["username"] == "testuser"
 
 
-def test_login_endpoint_success(client):
+@pytest.mark.asyncio
+async def test_login_endpoint_success(client):
     """Test successful login"""
     # First register a user
     registration_data = {
@@ -97,7 +109,8 @@ def test_login_endpoint_success(client):
     assert "user" in data
 
 
-def test_login_endpoint_invalid_credentials(client):
+@pytest.mark.asyncio
+async def test_login_endpoint_invalid_credentials(client):
     """Test login with invalid credentials"""
     login_data = {
         "email": "nonexistent@example.com",
@@ -111,7 +124,8 @@ def test_login_endpoint_invalid_credentials(client):
     assert "detail" in data
 
 
-def test_logout_endpoint(client):
+@pytest.mark.asyncio
+async def test_logout_endpoint(client):
     """Test logout endpoint"""
     response = client.post("/api/logout")
     assert response.status_code == 200
@@ -120,7 +134,8 @@ def test_logout_endpoint(client):
     assert data["message"] == "Logged out successfully"
 
 
-def test_protected_route_without_token(client):
+@pytest.mark.asyncio
+async def test_protected_route_without_token(client):
     """Test accessing protected route without token"""
     # This should fail since we need authentication
     user_id = "123e4567-e89b-12d3-a456-426614174000"  # Example UUID

@@ -5,20 +5,20 @@ stage: tasks
 date: 2026-01-09
 surface: agent
 model: claude-sonnet-4-5-20250929
-feature: 001-phase-2-web-app
-branch: 001-phase-2-web-app
+feature: 002-phase-2-web-app
+branch: 002-phase-2-web-app
 user: maaz
 command: "/sp.tasks"
 labels: ["tasks", "implementation", "web-app", "api", "authentication"]
 links:
-  spec: specs/001-phase-2-web-app/spec.md
+  spec: specs/002-phase-2-web-app/spec.md
   ticket: null
   adr: null
   pr: null
 files:
-  - specs/001-phase-2-web-app/tasks.md
+  - specs/002-phase-2-web-app/tasks.md
 tests:
-  - specs/001-phase-2-web-app/tasks.md
+  - specs/002-phase-2-web-app/tasks.md
 ---
 
 ## Prompt

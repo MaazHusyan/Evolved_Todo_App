@@ -37,7 +37,7 @@ Transform the existing console-based Todo application into a modern, multi-user 
 ### Documentation (this feature)
 
 ```text
-specs/001-phase-2-web-app/
+specs/002-phase-2-web-app/
 ├── plan.md              # This file (/sp.plan command output)
 ├── research.md          # Phase 0 output (/sp.plan command)
 ├── data-model.md        # Phase 1 output (/sp.plan command)

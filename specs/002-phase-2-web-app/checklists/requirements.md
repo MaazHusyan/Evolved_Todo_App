@@ -2,7 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-01-09
-**Feature**: specs/001-phase-2-web-app/spec.md
+**Feature**: specs/002-phase-2-web-app/spec.md
 
 ## Content Quality
 
