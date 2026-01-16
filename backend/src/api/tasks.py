@@ -9,29 +9,26 @@ from ..models.task import Task
 from ..services.task_service import TaskService
 from ..api.responses import TaskResponse, TaskCreateRequest, TaskUpdateRequest
 from ..models.base import SessionDep
-from ..auth.middleware import get_current_user, verify_user_id_match
-from ..auth.utils import create_access_token
+from ..auth.middleware import get_current_user
 from ..api.logging_config import log_info, log_error
 
-router = APIRouter(prefix="/api/{user_id}", tags=["tasks"])
+# API v1 prefix, user_id is NOT in path anymore
+router = APIRouter(prefix="/api/v1/tasks", tags=["tasks"])
 
-@router.get("/tasks", response_model=List[TaskResponse])
+@router.get("", response_model=List[TaskResponse])
 async def get_tasks(
-    user_id: str,
     token_data: dict = Depends(get_current_user),
     session: AsyncSession = SessionDep
 ):
     """
-    Get all tasks for a user
+    Get all tasks for the authenticated user
     """
-    # Verify that the user_id in the URL matches the user_id in the token
-    verify_user_id_match(user_id, token_data["user_id"])
-
+    user_id = token_data["user_id"]
     log_info(f"Getting tasks for user {user_id}")
 
     try:
         task_service = TaskService(session)
-        tasks = await task_service.get_tasks_by_user(UUID(user_id))
+        tasks = await task_service.get_tasks_by_user(user_id)
 
         # Log the number of tasks retrieved
         log_info(f"Retrieved {len(tasks)} tasks for user {user_id}")
@@ -45,25 +42,22 @@ async def get_tasks(
         )
 
 
-@router.post("/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
 async def create_task(
-    user_id: str,
     task_request: TaskCreateRequest,
     token_data: dict = Depends(get_current_user),
     session: AsyncSession = SessionDep
 ):
     """
-    Create a new task for a user
+    Create a new task for the authenticated user
     """
-    # Verify that the user_id in the URL matches the user_id in the token
-    verify_user_id_match(user_id, token_data["user_id"])
-
+    user_id = token_data["user_id"]
     log_info(f"Creating task for user {user_id}")
 
     try:
-        # Create task data with the user_id from the URL
+        # Create task data with the user_id from the token
         task_data_dict = task_request.dict()
-        task_data_dict["user_id"] = UUID(user_id)
+        task_data_dict["user_id"] = user_id
 
         # Create a TaskBase object from the dictionary
         from ..models.task import TaskBase
@@ -83,24 +77,21 @@ async def create_task(
         )
 
 
-@router.get("/tasks/{task_id}", response_model=TaskResponse)
+@router.get("/{task_id}", response_model=TaskResponse)
 async def get_task(
-    user_id: str,
     task_id: str,
     token_data: dict = Depends(get_current_user),
     session: AsyncSession = SessionDep
 ):
     """
-    Get a specific task by ID for a user
+    Get a specific task by ID for the authenticated user
     """
-    # Verify that the user_id in the URL matches the user_id in the token
-    verify_user_id_match(user_id, token_data["user_id"])
-
+    user_id = token_data["user_id"]
     log_info(f"Getting task {task_id} for user {user_id}")
 
     try:
         task_service = TaskService(session)
-        task = await task_service.get_task_by_id(UUID(task_id), UUID(user_id))
+        task = await task_service.get_task_by_id(UUID(task_id), user_id)
 
         if not task:
             raise HTTPException(
@@ -114,6 +105,11 @@ async def get_task(
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
     except Exception as e:
         log_error(f"Error retrieving task {task_id} for user {user_id}: {str(e)}")
         raise HTTPException(
@@ -122,25 +118,23 @@ async def get_task(
         )
 
 
-@router.put("/tasks/{task_id}", response_model=TaskResponse)
+@router.put("/{task_id}", response_model=TaskResponse)
 async def update_task(
-    user_id: str,
     task_id: str,
     task_request: TaskUpdateRequest,
     token_data: dict = Depends(get_current_user),
     session: AsyncSession = SessionDep
 ):
     """
-    Update a specific task by ID for a user
+    Update a specific task by ID for the authenticated user
     """
-    # Verify that the user_id in the URL matches the user_id in the token
-    verify_user_id_match(user_id, token_data["user_id"])
-
+    user_id = token_data["user_id"]
     log_info(f"Updating task {task_id} for user {user_id}")
 
     try:
         task_service = TaskService(session)
-        task = await task_service.get_task_by_id(UUID(task_id), UUID(user_id))
+        # Check existence and ownership
+        task = await task_service.get_task_by_id(UUID(task_id), user_id)
 
         if not task:
             raise HTTPException(
@@ -151,7 +145,7 @@ async def update_task(
         # Prepare update data
         update_data = task_request.dict()
 
-        updated_task = await task_service.update_task(UUID(task_id), UUID(user_id), update_data)
+        updated_task = await task_service.update_task(UUID(task_id), user_id, update_data)
 
         log_info(f"Updated task {task_id} for user {user_id}")
 
@@ -159,6 +153,11 @@ async def update_task(
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
     except Exception as e:
         log_error(f"Error updating task {task_id} for user {user_id}: {str(e)}")
         raise HTTPException(
@@ -167,24 +166,21 @@ async def update_task(
         )
 
 
-@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(
-    user_id: str,
     task_id: str,
     token_data: dict = Depends(get_current_user),
     session: AsyncSession = SessionDep
 ):
     """
-    Delete a specific task by ID for a user
+    Delete a specific task by ID for the authenticated user
     """
-    # Verify that the user_id in the URL matches the user_id in the token
-    verify_user_id_match(user_id, token_data["user_id"])
-
+    user_id = token_data["user_id"]
     log_info(f"Deleting task {task_id} for user {user_id}")
 
     try:
         task_service = TaskService(session)
-        success = await task_service.delete_task(UUID(task_id), UUID(user_id))
+        success = await task_service.delete_task(UUID(task_id), user_id)
 
         if not success:
             raise HTTPException(
@@ -198,6 +194,11 @@ async def delete_task(
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
     except Exception as e:
         log_error(f"Error deleting task {task_id} for user {user_id}: {str(e)}")
         raise HTTPException(
@@ -206,20 +207,17 @@ async def delete_task(
         )
 
 
-@router.patch("/tasks/{task_id}/complete", response_model=TaskResponse)
+@router.patch("/{task_id}/complete", response_model=TaskResponse)
 async def update_task_completion(
-    user_id: str,
     task_id: str,
     completion_data: dict,
     token_data: dict = Depends(get_current_user),
     session: AsyncSession = SessionDep
 ):
     """
-    Update the completion status of a specific task for a user
+    Update the completion status of a specific task for the authenticated user
     """
-    # Verify that the user_id in the URL matches the user_id in the token
-    verify_user_id_match(user_id, token_data["user_id"])
-
+    user_id = token_data["user_id"]
     log_info(f"Updating completion status for task {task_id} for user {user_id}")
 
     try:
@@ -238,7 +236,7 @@ async def update_task_completion(
             )
 
         task_service = TaskService(session)
-        task = await task_service.get_task_by_id(UUID(task_id), UUID(user_id))
+        task = await task_service.get_task_by_id(UUID(task_id), user_id)
 
         if not task:
             raise HTTPException(
@@ -246,7 +244,7 @@ async def update_task_completion(
                 detail="Task not found"
             )
 
-        updated_task = await task_service.update_task_completion(UUID(task_id), UUID(user_id), is_completed)
+        updated_task = await task_service.update_task_completion(UUID(task_id), user_id, is_completed)
 
         log_info(f"Updated completion status for task {task_id} for user {user_id}. Status: {is_completed}")
 
@@ -254,6 +252,11 @@ async def update_task_completion(
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
     except Exception as e:
         log_error(f"Error updating completion status for task {task_id} for user {user_id}: {str(e)}")
         raise HTTPException(
