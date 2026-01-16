@@ -5,7 +5,6 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from typing import List, Optional
 from ..models.task import Task, TaskBase
-from ..models.user import User
 import uuid
 
 class TaskService:
@@ -14,6 +13,10 @@ class TaskService:
 
     async def create_task(self, task_data: TaskBase) -> Task:
         """Create a new task"""
+        # Ensure user_id is set
+        if not task_data.user_id:
+            raise ValueError("User ID is required")
+
         task = Task(
             title=task_data.title,
             description=task_data.description,
@@ -26,7 +29,7 @@ class TaskService:
         await self.db_session.refresh(task)
         return task
 
-    async def get_task_by_id(self, task_id: uuid.UUID, user_id: uuid.UUID) -> Optional[Task]:
+    async def get_task_by_id(self, task_id: uuid.UUID, user_id: str) -> Optional[Task]:
         """Get a task by ID for a specific user"""
         statement = select(Task).where(
             Task.id == task_id,
@@ -35,13 +38,13 @@ class TaskService:
         result = await self.db_session.exec(statement)
         return result.first()
 
-    async def get_tasks_by_user(self, user_id: uuid.UUID) -> List[Task]:
+    async def get_tasks_by_user(self, user_id: str) -> List[Task]:
         """Get all tasks for a specific user"""
         statement = select(Task).where(Task.user_id == user_id)
         result = await self.db_session.exec(statement)
         return result.all()
 
-    async def get_completed_tasks_by_user(self, user_id: uuid.UUID) -> List[Task]:
+    async def get_completed_tasks_by_user(self, user_id: str) -> List[Task]:
         """Get completed tasks for a specific user"""
         statement = select(Task).where(
             Task.user_id == user_id,
@@ -50,7 +53,7 @@ class TaskService:
         result = await self.db_session.exec(statement)
         return result.all()
 
-    async def get_pending_tasks_by_user(self, user_id: uuid.UUID) -> List[Task]:
+    async def get_pending_tasks_by_user(self, user_id: str) -> List[Task]:
         """Get pending tasks for a specific user"""
         statement = select(Task).where(
             Task.user_id == user_id,
@@ -59,18 +62,19 @@ class TaskService:
         result = await self.db_session.exec(statement)
         return result.all()
 
-    async def update_task(self, task_id: uuid.UUID, user_id: uuid.UUID, task_data: dict) -> Optional[Task]:
+    async def update_task(self, task_id: uuid.UUID, user_id: str, task_data: dict) -> Optional[Task]:
         """Update a task for a specific user"""
         task = await self.get_task_by_id(task_id, user_id)
         if task:
             for key, value in task_data.items():
-                setattr(task, key, value)
+                if hasattr(task, key):
+                    setattr(task, key, value)
             self.db_session.add(task)
             await self.db_session.commit()
             await self.db_session.refresh(task)
         return task
 
-    async def delete_task(self, task_id: uuid.UUID, user_id: uuid.UUID) -> bool:
+    async def delete_task(self, task_id: uuid.UUID, user_id: str) -> bool:
         """Delete a task for a specific user"""
         task = await self.get_task_by_id(task_id, user_id)
         if task:
@@ -79,7 +83,7 @@ class TaskService:
             return True
         return False
 
-    async def update_task_completion(self, task_id: uuid.UUID, user_id: uuid.UUID, is_completed: bool) -> Optional[Task]:
+    async def update_task_completion(self, task_id: uuid.UUID, user_id: str, is_completed: bool) -> Optional[Task]:
         """Update task completion status"""
         task = await self.get_task_by_id(task_id, user_id)
         if task:

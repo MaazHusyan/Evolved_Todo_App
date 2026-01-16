@@ -14,6 +14,11 @@ Base = SQLModel
 # Get database URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./todo_app.db")
 
+# Ensure async driver is used for PostgreSQL
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+    DATABASE_URL = DATABASE_URL.replace("sslmode=require", "ssl=require")
+
 # Create the async engine
 # Use different settings for SQLite vs PostgreSQL
 if "sqlite" in DATABASE_URL:
