@@ -31,6 +31,8 @@ if "sqlite" in DATABASE_URL:
     )
 else:
     # PostgreSQL-specific settings
+    # Neon free tier databases pause after inactivity
+    # Cold starts can take 30-60 seconds
     engine = create_async_engine(
         DATABASE_URL,
         echo=True,
@@ -38,7 +40,15 @@ else:
         pool_size=20,
         max_overflow=30,
         pool_pre_ping=True,
-        pool_recycle=300
+        pool_recycle=300,
+        # Extended timeouts for Neon cold starts
+        connect_args={
+            "timeout": 60,  # 60 seconds connection timeout
+            "command_timeout": 60,  # 60 seconds command timeout
+            "server_settings": {
+                "application_name": "todo_backend"
+            }
+        }
     )
 
 async def create_db_and_tables():

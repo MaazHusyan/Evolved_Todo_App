@@ -13,7 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
+      <body className={`${inter.variable} font-sans bg-gray-50 dark:bg-gray-900 transition-colors duration-200`} suppressHydrationWarning>
         <ThemeProvider>
           <GlobalThemeToggle />
           {children}
