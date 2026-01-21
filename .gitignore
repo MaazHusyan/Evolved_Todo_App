@@ -90,12 +90,15 @@ secrets/
 *.crt
 *.cert
 
-# Deployment scripts with credentials
+# Deployment scripts and setup files with credentials
 frontend/deploy-to-vercel.sh
 frontend/test-config.sh
+frontend/verify-backend.js
+frontend/VERCEL_SETUP.md
 backend/deploy-to-huggingface.sh
 **/deploy*.sh
 **/*-secrets.sh
+**/*SETUP.md
 
 Z_rough_work.canvas
 uv.lock
