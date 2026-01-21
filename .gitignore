@@ -90,6 +90,13 @@ secrets/
 *.crt
 *.cert
 
+# Deployment scripts with credentials
+frontend/deploy-to-vercel.sh
+frontend/test-config.sh
+backend/deploy-to-huggingface.sh
+**/deploy*.sh
+**/*-secrets.sh
+
 Z_rough_work.canvas
 uv.lock
 tasks.json
