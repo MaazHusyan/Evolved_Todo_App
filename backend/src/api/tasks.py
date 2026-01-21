@@ -4,6 +4,7 @@ Task API endpoints for the Todo application
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from uuid import UUID
+from datetime import datetime
 from sqlmodel.ext.asyncio.session import AsyncSession
 from ..models.task import Task
 from ..services.task_service import TaskService
@@ -11,6 +12,19 @@ from ..api.responses import TaskResponse, TaskCreateRequest, TaskUpdateRequest
 from ..models.base import SessionDep
 from ..auth.middleware import get_current_user
 from ..api.logging_config import log_info, log_error
+
+
+def normalize_datetime(dt):
+    """
+    Convert timezone-aware datetime to timezone-naive datetime.
+    This is needed because the database uses TIMESTAMP WITHOUT TIME ZONE.
+    """
+    if dt is None:
+        return None
+    if isinstance(dt, datetime) and dt.tzinfo is not None:
+        # Remove timezone info by replacing with None
+        return dt.replace(tzinfo=None)
+    return dt
 
 # API v1 prefix, user_id is NOT in path anymore
 router = APIRouter(prefix="/api/v1/tasks", tags=["tasks"])
@@ -58,6 +72,10 @@ async def create_task(
         # Create task data with the user_id from the token
         task_data_dict = task_request.dict()
         task_data_dict["user_id"] = user_id
+
+        # Normalize datetime fields to remove timezone info
+        task_data_dict["start_date"] = normalize_datetime(task_data_dict.get("start_date"))
+        task_data_dict["due_date"] = normalize_datetime(task_data_dict.get("due_date"))
 
         # Create a TaskBase object from the dictionary
         from ..models.task import TaskBase
@@ -142,8 +160,10 @@ async def update_task(
                 detail="Task not found"
             )
 
-        # Prepare update data
+        # Prepare update data and normalize datetime fields
         update_data = task_request.dict()
+        update_data["start_date"] = normalize_datetime(update_data.get("start_date"))
+        update_data["due_date"] = normalize_datetime(update_data.get("due_date"))
 
         updated_task = await task_service.update_task(UUID(task_id), user_id, update_data)
 
