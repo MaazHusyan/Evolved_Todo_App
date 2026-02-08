@@ -34,6 +34,7 @@ class TaskResponse(BaseModel):
     start_date: Optional[datetime] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 class TaskCreateRequest(BaseModel):
     """Task creation request model"""
@@ -42,6 +43,7 @@ class TaskCreateRequest(BaseModel):
     start_date: Optional[datetime] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 class TaskUpdateRequest(BaseModel):
     """Task update request model"""
@@ -51,3 +53,4 @@ class TaskUpdateRequest(BaseModel):
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
     is_completed: bool
+    tags: Optional[List[str]] = None

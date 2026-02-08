@@ -91,6 +91,12 @@ class ApiService {
       body: JSON.stringify({ is_completed: isCompleted }),
     });
   }
+
+  async deleteAllTasks(taskIds) {
+    // Delete all tasks in parallel
+    const deletePromises = taskIds.map(id => this.deleteTask(id));
+    return Promise.all(deletePromises);
+  }
 }
 
 export const api = new ApiService();

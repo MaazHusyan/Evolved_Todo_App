@@ -3,18 +3,33 @@ import { headers } from "next/headers";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
 
-async function getSession() {
-  try {
-    const headersList = await headers();
-    const session = await auth.api.getSession({
-      headers: headersList,
-    });
-    console.log("Session retrieved:", session ? "yes" : "no", session?.user?.id);
-    return session;
-  } catch (error) {
-    console.error("Error getting session:", error);
-    return null;
+async function getSession(retries = 8) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const headersList = await headers();
+      const session = await auth.api.getSession({
+        headers: headersList,
+      });
+      console.log("Session retrieved:", session ? "yes" : "no", session?.user?.id);
+      return session;
+    } catch (error) {
+      console.error(`Error getting session (attempt ${i + 1}/${retries}):`, error.message);
+
+      // If we have retries left, wait and try again
+      // Longer waits for Neon cold starts: 2s, 3s, 4s, 5s, 6s, 7s, 8s (total ~35s)
+      if (i < retries - 1) {
+        const waitTime = (i + 2) * 1000;
+        console.log(`Retrying session check in ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+
+      // If it's the last retry, return null
+      console.error("All session retry attempts failed");
+      return null;
+    }
   }
+  return null;
 }
 
 export async function GET(request) {

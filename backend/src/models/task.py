@@ -1,9 +1,9 @@
 """
 Task model for the Todo application
 """
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, JSON
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 import uuid
 
 class TaskBase(SQLModel):
@@ -14,6 +14,7 @@ class TaskBase(SQLModel):
     start_date: Optional[datetime] = Field(default=None)
     due_date: Optional[datetime] = Field(default=None)
     priority: Optional[str] = Field(default=None, regex=r"^(low|medium|high)$")
+    tags: Optional[List[str]] = Field(default_factory=list, sa_type=JSON)
 
 class Task(TaskBase, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)

@@ -12,8 +12,9 @@ A full-stack todo application with CLI and web interfaces, built with modern asy
 ### Phase I - CLI Application ✅
 A decoupled, asynchronous Todo CLI engine built with Python 3.13, Typer, and Pydantic v2.
 
-### Phase II - Web Application ✅
+### Phase II - Web Application ✅ (Enhanced UI in Progress)
 Full-stack web application with Next.js frontend, FastAPI backend, and PostgreSQL database.
+**Current Enhancement**: Next-generation glassmorphism UI with live backgrounds and AI chatbot integration.
 
 ## 🏗️ Architecture
 
@@ -23,12 +24,15 @@ This project follows an evolutionary design strategy:
 - **Repository Pattern**: Abstract data access layer (in-memory → SQLModel → PostgreSQL)
 - **Async-First**: Fully asynchronous core logic
 - **Pydantic Validation**: Strict data modeling and validation using Pydantic v2
+- **Next-Gen UI**: Glassmorphism design with live animated backgrounds
 
 ### Tech Stack
 
 **Frontend**
 - Next.js 16.1.1 (App Router with Turbopack)
 - React 19 with Server Components
+- **NEW**: Glassmorphism design system with live backgrounds
+- **NEW**: AI chatbot integration
 - Tailwind CSS for styling
 - Better Auth for authentication
 - Deployed on Vercel

@@ -1,22 +1,37 @@
 import "./globals.css";
 import { ThemeProvider } from "@/lib/themeContext";
-import GlobalThemeToggle from "@/components/GlobalThemeToggle";
-import { Inter } from "next/font/google";
+import { NoiseTexture } from "@/components/ui/noise-texture";
+import { AnimatedGrid } from "@/components/ui/animated-grid";
+import { GradientOrbs } from "@/components/ui/gradient-orbs";
+import { ParticleBackground } from "@/components/ui/particle-background";
+import { Poppins } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins"
+});
 
 export const metadata = {
   title: "Evolve Todo App",
-  description: "A modern full-stack todo application",
+  description: "A modern full-stack todo application with glassmorphism design",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans bg-gray-50 dark:bg-gray-900 transition-colors duration-200`} suppressHydrationWarning>
+      <body className={`${poppins.variable} font-sans min-h-screen bg-[var(--bg-primary)] text-foreground transition-colors duration-200`} suppressHydrationWarning>
         <ThemeProvider>
-          <GlobalThemeToggle />
-          {children}
+          {/* Multi-layered background system with proper z-index hierarchy */}
+          <NoiseTexture />
+          <AnimatedGrid />
+          <GradientOrbs />
+          <ParticleBackground />
+
+          {/* Main content with higher z-index */}
+          <div className="relative" style={{ zIndex: 10 }}>
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
