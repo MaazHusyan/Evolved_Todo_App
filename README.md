@@ -1,20 +1,44 @@
 # Evolve Todo App
 
-A full-stack todo application with CLI and web interfaces, built with modern async architecture.
+> A modern, full-stack task management application featuring a stunning glassmorphism UI, built with Next.js 16, React 19, FastAPI, and PostgreSQL. Includes both CLI and web interfaces with mobile-first responsive design.
+
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://frontend-cyan-delta-89.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Python_3.13-green)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+## ✨ Highlights
+
+- 🎨 **Next-Gen UI**: Glassmorphism design with animated backgrounds and smooth transitions
+- 📱 **Mobile-First**: Fully responsive design optimized for all screen sizes
+- ⚡ **Modern Stack**: Next.js 16 with Turbopack, React 19, FastAPI, PostgreSQL
+- 🔐 **Secure Auth**: JWT-based authentication with session management
+- 🌙 **Dark Mode**: Beautiful dark theme with seamless switching
+- 🚀 **Production Ready**: Deployed on Vercel (frontend) and Hugging Face Spaces (backend)
+- 📅 **Advanced Features**: Date/time picker, priority levels, tags, filtering, and sorting
+- 💻 **CLI Interface**: Powerful command-line tool with interactive shell mode
 
 ## 🚀 Live Demo
 
 - **Web App**: https://frontend-cyan-delta-89.vercel.app
 - **Backend API**: https://maazHusyan-todo-backend.hf.space
 
-## 📋 Project Phases
+## 📸 Screenshots
+
+### Dashboard View
+Beautiful glassmorphism design with task cards, priority indicators, and filtering options.
+
+### Mobile Experience
+Fully responsive design that works seamlessly on all devices.
+
+## 📋 Project Evolution
 
 ### Phase I - CLI Application ✅
-A decoupled, asynchronous Todo CLI engine built with Python 3.13, Typer, and Pydantic v2.
+A decoupled, asynchronous Todo CLI engine built with Python 3.13, Typer, and Pydantic v2. Features persistent storage, priority levels, tagging, and an interactive shell.
 
-### Phase II - Web Application ✅ (Enhanced UI in Progress)
-Full-stack web application with Next.js frontend, FastAPI backend, and PostgreSQL database.
-**Current Enhancement**: Next-generation glassmorphism UI with live backgrounds and AI chatbot integration.
+### Phase II - Web Application ✅
+Full-stack web application with Next.js 16 frontend, FastAPI backend, and PostgreSQL database. Features next-generation glassmorphism UI with animated backgrounds, mobile-first responsive design, and advanced task management capabilities.
 
 ## 🏗️ Architecture
 
@@ -118,21 +142,32 @@ uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
 - ✅ Async operations
 
 ### Web App Features (Phase II)
-- ✅ User authentication (register/login)
-- ✅ Secure session management
-- ✅ Simple task creation
-- ✅ Advanced task creation with:
-  - Description
-  - Start date and time
-  - Due date and time
-  - Priority levels (low, medium, high)
-- ✅ Task editing and deletion
-- ✅ Task completion toggle
-- ✅ Real-time task updates
-- ✅ Dark mode support
-- ✅ Responsive design (mobile, tablet, desktop)
-- ✅ Overdue task indicators
-- ✅ Task filtering and sorting
+- ✅ **Authentication**: Secure user registration and login with JWT tokens
+- ✅ **Task Management**: Create, edit, delete, and complete tasks
+- ✅ **Advanced Task Creation**:
+  - Rich descriptions
+  - Start date and time with custom picker
+  - Due date and time with custom picker
+  - Priority levels (low, medium, high, urgent)
+  - Custom tags with predefined options
+- ✅ **Smart Filtering**: Filter by status, priority, tags, and search
+- ✅ **Priority Sorting**: Tasks automatically sorted by urgency
+- ✅ **Visual Indicators**:
+  - Colored priority borders
+  - Overdue task badges
+  - Completion status
+- ✅ **Modern UI/UX**:
+  - Glassmorphism design system
+  - Animated backgrounds and transitions
+  - Dark mode with theme persistence
+  - Mobile-first responsive design
+  - Centered modal dialogs
+  - Toast notifications
+- ✅ **Dashboard Features**:
+  - Summary cards (All, Pending, Completed, Overdue)
+  - Control sidebar with filters
+  - Task grid with responsive columns
+  - User profile with avatar
 
 ## 📱 Web Application Usage
 
