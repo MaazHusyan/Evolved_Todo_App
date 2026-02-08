@@ -27,37 +27,37 @@ export function ControlSidebar({
       transition={{ duration: 0.4, delay: 0.1 }}
       className={cn("w-full h-full", className)}
     >
-      <div className="glass dark:glass-dark rounded-2xl p-6 border-0 shadow-xl h-full flex flex-col gap-6">
+      <div className="glass dark:glass-dark rounded-2xl p-4 sm:p-5 md:p-6 border-0 shadow-xl h-full flex flex-col gap-4 sm:gap-5 md:gap-6">
         {/* Sidebar Header */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
             Control Panel
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
             Search and filter your tasks
           </p>
         </div>
 
         {/* Search Bar */}
         <div className="space-y-2">
-          <Label htmlFor="search" className="text-sm font-medium">
+          <Label htmlFor="search" className="text-xs sm:text-sm font-medium">
             Search Tasks
           </Label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
             <Input
               id="search"
               type="text"
-              placeholder="Search by title, description, or tags..."
+              placeholder="Search tasks..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 pr-10 glass-input"
+              className="pl-9 sm:pl-10 pr-9 sm:pr-10 glass-input text-sm"
             />
             {searchQuery && (
               <button
                 onClick={onClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -66,9 +66,9 @@ export function ControlSidebar({
         </div>
 
         {/* Priority Filters */}
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Filter by Priority</Label>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-2 sm:space-y-3">
+          <Label className="text-xs sm:text-sm font-medium">Filter by Priority</Label>
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {priorities.map((priority) => {
               const isActive = activeFilters.priorities?.includes(priority);
               return (
@@ -76,7 +76,7 @@ export function ControlSidebar({
                   key={priority}
                   onClick={() => onFilterChange?.("priority", priority)}
                   className={cn(
-                    "cursor-pointer transition-all hover:scale-105",
+                    "cursor-pointer transition-all hover:scale-105 text-xs sm:text-sm px-2 sm:px-3 py-1",
                     isActive
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -90,9 +90,9 @@ export function ControlSidebar({
         </div>
 
         {/* Quick Tags */}
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Quick Tags</Label>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-2 sm:space-y-3">
+          <Label className="text-xs sm:text-sm font-medium">Quick Tags</Label>
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {quickTags.map((tag) => {
               const isActive = activeFilters.tags?.includes(tag);
               return (
@@ -100,7 +100,7 @@ export function ControlSidebar({
                   key={tag}
                   onClick={() => onFilterChange?.("tag", tag)}
                   className={cn(
-                    "cursor-pointer transition-all hover:scale-105",
+                    "cursor-pointer transition-all hover:scale-105 text-xs sm:text-sm px-2 sm:px-3 py-1",
                     isActive
                       ? "bg-purple-600 text-white border-purple-600"
                       : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -114,9 +114,9 @@ export function ControlSidebar({
         </div>
 
         {/* Status Filter */}
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Filter by Status</Label>
-          <div className="flex flex-col gap-2">
+        <div className="space-y-2 sm:space-y-3">
+          <Label className="text-xs sm:text-sm font-medium">Filter by Status</Label>
+          <div className="flex flex-col gap-1.5 sm:gap-2">
             {["all", "pending", "completed"].map((status) => {
               const isActive = activeFilters.status === status;
               return (
@@ -126,7 +126,7 @@ export function ControlSidebar({
                   variant={isActive ? "default" : "outline"}
                   size="sm"
                   className={cn(
-                    "justify-start",
+                    "justify-start text-xs sm:text-sm h-8 sm:h-9",
                     isActive && "bg-blue-600 hover:bg-blue-700"
                   )}
                 >
@@ -141,12 +141,12 @@ export function ControlSidebar({
         <div className="flex-1" />
 
         {/* Delete All Button */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={onDeleteAll}
               variant="destructive"
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm h-9 sm:h-10"
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Delete All Tasks

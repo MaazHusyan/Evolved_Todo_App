@@ -72,7 +72,7 @@ export default function RegisterPage() {
       title="Create your account"
       subtitle="Start organizing your tasks today"
     >
-      <form className="space-y-6" onSubmit={handleRegister}>
+      <form className="space-y-5 sm:space-y-6" onSubmit={handleRegister}>
         {/* Name Input */}
         <GlassInput
           id="name"
@@ -122,8 +122,8 @@ export default function RegisterPage() {
       </form>
 
       {/* Login Link */}
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-800 dark:text-gray-300">
+      <div className="mt-5 sm:mt-6 text-center">
+        <p className="text-xs sm:text-sm text-gray-800 dark:text-gray-300">
           Already have an account?{' '}
           <Link
             href="/login"

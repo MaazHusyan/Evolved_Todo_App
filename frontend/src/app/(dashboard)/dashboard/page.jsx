@@ -287,12 +287,12 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen transition-colors duration-200 p-6">
+    <div className="min-h-screen transition-colors duration-200 p-3 sm:p-4 md:p-6">
       {/* Toast Notifications */}
       <Toaster />
 
       {/* Main Container */}
-      <div className="max-w-[1920px] mx-auto space-y-6">
+      <div className="max-w-[1920px] mx-auto space-y-4 sm:space-y-5 md:space-y-6">
         {/* User Header Card */}
         <UserHeaderCard
           user={{
@@ -306,19 +306,33 @@ export default function DashboardPage() {
         />
 
         {/* Main Layout: Sidebar + Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-          {/* Left Sidebar */}
-          <ControlSidebar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onClearSearch={() => setSearchQuery("")}
-            onDeleteAll={handleDeleteAll}
-            activeFilters={activeFilters}
-            onFilterChange={handleFilterChange}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr] gap-4 sm:gap-5 md:gap-6">
+          {/* Left Sidebar - Hidden on mobile, shown in modal or as collapsible */}
+          <div className="hidden lg:block">
+            <ControlSidebar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onClearSearch={() => setSearchQuery("")}
+              onDeleteAll={handleDeleteAll}
+              activeFilters={activeFilters}
+              onFilterChange={handleFilterChange}
+            />
+          </div>
+
+          {/* Mobile Filters - Collapsible section on mobile */}
+          <div className="lg:hidden">
+            <ControlSidebar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onClearSearch={() => setSearchQuery("")}
+              onDeleteAll={handleDeleteAll}
+              activeFilters={activeFilters}
+              onFilterChange={handleFilterChange}
+            />
+          </div>
 
           {/* Main Content Area */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-5 md:space-y-6">
             {/* Summary Cards */}
             <SummaryCards
               tasks={tasks}

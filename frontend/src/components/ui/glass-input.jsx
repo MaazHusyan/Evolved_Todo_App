@@ -32,8 +32,8 @@ export const GlassInput = forwardRef(({
       <div className="relative">
         {/* Left Icon */}
         {Icon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none z-10">
-            <Icon size={20} />
+          <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none z-10">
+            <Icon size={18} className="sm:w-5 sm:h-5" />
           </div>
         )}
 
@@ -47,9 +47,10 @@ export const GlassInput = forwardRef(({
           onBlur={() => setIsFocused(false)}
           className={`
             glass-input
-            w-full px-4 py-3.5
-            ${Icon ? 'pl-14' : 'pl-4'}
-            ${isPasswordType ? 'pr-12' : 'pr-4'}
+            w-full px-3 py-3 sm:px-4 sm:py-3.5
+            ${Icon ? 'pl-10 sm:pl-14' : 'pl-3 sm:pl-4'}
+            ${isPasswordType ? 'pr-10 sm:pr-12' : 'pr-3 sm:pr-4'}
+            text-sm sm:text-base
             text-gray-900 dark:text-white
             placeholder-transparent
             transition-all duration-300
@@ -66,11 +67,11 @@ export const GlassInput = forwardRef(({
           htmlFor={props.id}
           className={`
             absolute
-            ${Icon ? 'left-14' : 'left-4'}
+            ${Icon ? 'left-10 sm:left-14' : 'left-3 sm:left-4'}
             transition-all duration-300 pointer-events-none
             ${isFloating
-              ? 'top-0 -translate-y-1/2 text-xs bg-gray-900/50 dark:bg-gray-900/80 px-2 rounded'
-              : 'top-1/2 -translate-y-1/2 text-base'
+              ? 'top-0 -translate-y-1/2 text-[10px] sm:text-xs bg-gray-900/50 dark:bg-gray-900/80 px-1.5 sm:px-2 rounded'
+              : 'top-1/2 -translate-y-1/2 text-sm sm:text-base'
             }
             ${isFocused && !error ? 'text-neon-blue' : 'text-gray-500 dark:text-gray-400'}
             ${error ? 'text-red-500' : ''}
@@ -84,11 +85,11 @@ export const GlassInput = forwardRef(({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            {showPassword ? <EyeOff size={18} className="sm:w-5 sm:h-5" /> : <Eye size={18} className="sm:w-5 sm:h-5" />}
           </button>
         )}
       </div>

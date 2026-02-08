@@ -62,7 +62,7 @@ export function SummaryCards({ tasks, activeFilter, onFilterClick, className }) 
   ];
 
   return (
-    <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4", className)}>
+    <div className={cn("grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4", className)}>
       {summaryData.map((item, index) => {
         const Icon = item.icon;
         const isActive = activeFilter === item.id;
@@ -86,18 +86,18 @@ export function SummaryCards({ tasks, activeFilter, onFilterClick, className }) 
                 item.hoverBg
               )}
             >
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-5 md:p-6">
                 <div className="flex items-center justify-between">
                   {/* Icon Section */}
                   <div
                     className={cn(
-                      "p-3 rounded-xl bg-gradient-to-br",
+                      "p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br",
                       item.bgGradient,
                       "border",
                       item.borderColor
                     )}
                   >
-                    <Icon className={cn("h-6 w-6", item.iconColor)} />
+                    <Icon className={cn("h-5 w-5 sm:h-6 sm:w-6", item.iconColor)} />
                   </div>
 
                   {/* Count Badge */}
@@ -108,7 +108,7 @@ export function SummaryCards({ tasks, activeFilter, onFilterClick, className }) 
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.3 }}
                       className={cn(
-                        "text-4xl font-bold bg-gradient-to-br bg-clip-text text-transparent",
+                        "text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-br bg-clip-text text-transparent",
                         item.color === "blue" && "from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600",
                         item.color === "yellow" && "from-yellow-600 to-orange-600 dark:from-yellow-400 dark:to-orange-400",
                         item.color === "green" && "from-green-600 to-green-800 dark:from-green-400 dark:to-green-600",
@@ -121,11 +121,11 @@ export function SummaryCards({ tasks, activeFilter, onFilterClick, className }) 
                 </div>
 
                 {/* Title */}
-                <div className="mt-4">
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <div className="mt-3 sm:mt-4">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-500 mt-0.5 sm:mt-1">
                     {isActive ? "Currently viewing" : "Click to filter"}
                   </p>
                 </div>

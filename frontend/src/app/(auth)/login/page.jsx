@@ -69,7 +69,7 @@ export default function LoginPage() {
       title="Welcome back"
       subtitle="Sign in to your account to manage your tasks"
     >
-      <form className="space-y-6" onSubmit={handleLogin}>
+      <form className="space-y-5 sm:space-y-6" onSubmit={handleLogin}>
         {/* Email Input */}
         <GlassInput
           id="email"
@@ -107,8 +107,8 @@ export default function LoginPage() {
       </form>
 
       {/* Register Link */}
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-800 dark:text-gray-300">
+      <div className="mt-5 sm:mt-6 text-center">
+        <p className="text-xs sm:text-sm text-gray-800 dark:text-gray-300">
           New to Evolve Todo?{' '}
           <Link
             href="/register"
