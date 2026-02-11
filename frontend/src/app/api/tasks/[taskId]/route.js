@@ -1,20 +1,17 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
 
-async function getSession() {
-  const headersList = await headers();
-  const session = await auth.api.getSession({
-    headers: headersList,
-  });
-  return session;
+async function getAuthToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get('bearer_token')?.value || null;
 }
 
 export async function GET(request, { params }) {
-  const session = await getSession();
+  const authHeader = request.headers.get('authorization');
+  const token = authHeader?.replace('Bearer ', '') || await getAuthToken();
 
-  if (!session) {
+  if (!token) {
     return Response.json({ detail: "Not authenticated" }, { status: 401 });
   }
 
@@ -24,9 +21,14 @@ export async function GET(request, { params }) {
     const response = await fetch(`${BACKEND_URL}/api/v1/tasks/${taskId}`, {
       headers: {
         "Content-Type": "application/json",
-        "X-User-Id": session.user.id,
+        "Authorization": `Bearer ${token}`,
       },
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return Response.json(errorData, { status: response.status });
+    }
 
     const data = await response.json();
     return Response.json(data, { status: response.status });
@@ -37,9 +39,10 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-  const session = await getSession();
+  const authHeader = request.headers.get('authorization');
+  const token = authHeader?.replace('Bearer ', '') || await getAuthToken();
 
-  if (!session) {
+  if (!token) {
     return Response.json({ detail: "Not authenticated" }, { status: 401 });
   }
 
@@ -51,10 +54,15 @@ export async function PUT(request, { params }) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "X-User-Id": session.user.id,
+        "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return Response.json(errorData, { status: response.status });
+    }
 
     const data = await response.json();
     return Response.json(data, { status: response.status });
@@ -65,9 +73,10 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const session = await getSession();
+  const authHeader = request.headers.get('authorization');
+  const token = authHeader?.replace('Bearer ', '') || await getAuthToken();
 
-  if (!session) {
+  if (!token) {
     return Response.json({ detail: "Not authenticated" }, { status: 401 });
   }
 
@@ -78,12 +87,17 @@ export async function DELETE(request, { params }) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "X-User-Id": session.user.id,
+        "Authorization": `Bearer ${token}`,
       },
     });
 
     if (response.status === 204) {
       return new Response(null, { status: 204 });
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return Response.json(errorData, { status: response.status });
     }
 
     const data = await response.json();
@@ -95,9 +109,10 @@ export async function DELETE(request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
-  const session = await getSession();
+  const authHeader = request.headers.get('authorization');
+  const token = authHeader?.replace('Bearer ', '') || await getAuthToken();
 
-  if (!session) {
+  if (!token) {
     return Response.json({ detail: "Not authenticated" }, { status: 401 });
   }
 
@@ -109,10 +124,15 @@ export async function PATCH(request, { params }) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "X-User-Id": session.user.id,
+        "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return Response.json(errorData, { status: response.status });
+    }
 
     const data = await response.json();
     return Response.json(data, { status: response.status });

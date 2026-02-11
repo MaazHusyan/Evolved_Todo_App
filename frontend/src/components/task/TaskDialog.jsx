@@ -39,32 +39,34 @@ export function TaskDialog({ open, onOpenChange, task, onSubmit }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden overflow-x-hidden no-scrollbar [&>div]:overflow-x-hidden">
         <DialogHeader>
-          <DialogTitle>{task ? "Edit Task" : "Create New Task"}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-900 dark:text-white">{task ? "Edit Task" : "Create New Task"}</DialogTitle>
+          <DialogDescription className="text-gray-600 dark:text-gray-400">
             {task
               ? "Update your task details below. Click save when you're done."
               : "Fill in the details below to create a new task."}
           </DialogDescription>
         </DialogHeader>
-        <TaskForm
-          initialData={
-            task
-              ? {
-                  title: task.title,
-                  description: task.description || "",
-                  start_date: formatDateForInput(task.start_date),
-                  due_date: formatDateForInput(task.due_date),
-                  priority: task.priority || "",
-                  tags: task.tags || [],
-                }
-              : undefined
-          }
-          onSubmit={handleSubmit}
-          onCancel={() => handleClose()}
-          isLoading={isLoading}
-        />
+        <div className="max-h-[calc(90vh-140px)] overflow-y-auto overflow-x-hidden no-scrollbar [&>_*]:overflow-x-hidden">
+          <TaskForm
+            initialData={
+              task
+                ? {
+                    title: task.title,
+                    description: task.description || "",
+                    start_date: formatDateForInput(task.start_date),
+                    due_date: formatDateForInput(task.due_date),
+                    priority: task.priority || "",
+                    tags: task.tags || [],
+                  }
+                : undefined
+            }
+            onSubmit={handleSubmit}
+            onCancel={() => handleClose()}
+            isLoading={isLoading}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

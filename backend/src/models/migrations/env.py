@@ -3,8 +3,10 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from sqlmodel import SQLModel
-from ..models.user import User
-from ..models.task import Task
+from src.models.user import User
+from src.models.task import Task
+from src.models.conversation import Conversation
+from src.models.message import Message
 
 # this is the Alembic Config object
 config = context.config
