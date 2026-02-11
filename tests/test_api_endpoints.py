@@ -15,20 +15,22 @@ async def test_task_service_create_task():
     mock_session = AsyncMock(spec=AsyncSession)
     service = TaskService(mock_session)
 
+    # user_id must be a string, not UUID
     task_data = TaskBase(
         title="Test Task",
         description="Test Description",
-        user_id=uuid4(),
+        user_id=str(uuid4()),
         due_date=None,
-        priority="medium"
+        priority="medium",
     )
 
-    with patch.object(mock_session, 'add'), \
-         patch.object(mock_session, 'commit'), \
-         patch.object(mock_session, 'refresh'):
-
+    with (
+        patch.object(mock_session, "add"),
+        patch.object(mock_session, "commit"),
+        patch.object(mock_session, "refresh"),
+    ):
         result = await service.create_task(task_data)
-        assert hasattr(result, 'title')
+        assert hasattr(result, "title")
         assert result.title == "Test Task"
 
 
@@ -39,10 +41,10 @@ async def test_task_service_get_task_by_id():
     service = TaskService(mock_session)
 
     task_id = uuid4()
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
 
     # Mock the exec method on the session to return the expected result
-    mock_exec_result = AsyncMock()
+    mock_exec_result = MagicMock()
     mock_exec_result.first.return_value = None
     mock_session.exec = AsyncMock(return_value=mock_exec_result)
 
@@ -56,10 +58,10 @@ async def test_task_service_get_tasks_by_user():
     mock_session = AsyncMock(spec=AsyncSession)
     service = TaskService(mock_session)
 
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
 
     # Mock the exec method on the session
-    mock_exec_result = AsyncMock()
+    mock_exec_result = MagicMock()
     mock_exec_result.all.return_value = []
     mock_session.exec = AsyncMock(return_value=mock_exec_result)
 
@@ -74,7 +76,7 @@ async def test_task_service_update_task():
     service = TaskService(mock_session)
 
     task_id = uuid4()
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
     task_data = {"title": "Updated Title"}
 
     # Mock a task object
@@ -83,11 +85,12 @@ async def test_task_service_update_task():
     mock_task.title = "Original Title"
 
     # Mock get_task_by_id to return the mock task
-    with patch.object(service, 'get_task_by_id', return_value=mock_task), \
-         patch.object(mock_session, 'add'), \
-         patch.object(mock_session, 'commit'), \
-         patch.object(mock_session, 'refresh'):
-
+    with (
+        patch.object(service, "get_task_by_id", return_value=mock_task),
+        patch.object(mock_session, "add"),
+        patch.object(mock_session, "commit"),
+        patch.object(mock_session, "refresh"),
+    ):
         result = await service.update_task(task_id, user_id, task_data)
         assert result is not None
         assert result.title == "Updated Title"
@@ -100,17 +103,18 @@ async def test_task_service_delete_task():
     service = TaskService(mock_session)
 
     task_id = uuid4()
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
 
     # Mock a task object
     mock_task = MagicMock()
     mock_task.id = task_id
 
     # Mock get_task_by_id to return the mock task
-    with patch.object(service, 'get_task_by_id', return_value=mock_task), \
-         patch.object(mock_session, 'delete'), \
-         patch.object(mock_session, 'commit'):
-
+    with (
+        patch.object(service, "get_task_by_id", return_value=mock_task),
+        patch.object(mock_session, "delete"),
+        patch.object(mock_session, "commit"),
+    ):
         result = await service.delete_task(task_id, user_id)
         assert result is True
 
@@ -122,7 +126,7 @@ async def test_task_service_update_task_completion():
     service = TaskService(mock_session)
 
     task_id = uuid4()
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
 
     # Mock a task object
     mock_task = MagicMock()
@@ -130,11 +134,12 @@ async def test_task_service_update_task_completion():
     mock_task.is_completed = False
 
     # Mock get_task_by_id to return the mock task
-    with patch.object(service, 'get_task_by_id', return_value=mock_task), \
-         patch.object(mock_session, 'add'), \
-         patch.object(mock_session, 'commit'), \
-         patch.object(mock_session, 'refresh'):
-
+    with (
+        patch.object(service, "get_task_by_id", return_value=mock_task),
+        patch.object(mock_session, "add"),
+        patch.object(mock_session, "commit"),
+        patch.object(mock_session, "refresh"),
+    ):
         result = await service.update_task_completion(task_id, user_id, True)
         assert result is not None
         assert result.is_completed is True
@@ -146,10 +151,10 @@ async def test_task_service_get_completed_tasks_by_user():
     mock_session = AsyncMock(spec=AsyncSession)
     service = TaskService(mock_session)
 
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
 
     # Mock the exec method on the session
-    mock_exec_result = AsyncMock()
+    mock_exec_result = MagicMock()
     mock_exec_result.all.return_value = []
     mock_session.exec = AsyncMock(return_value=mock_exec_result)
 
@@ -163,10 +168,10 @@ async def test_task_service_get_pending_tasks_by_user():
     mock_session = AsyncMock(spec=AsyncSession)
     service = TaskService(mock_session)
 
-    user_id = uuid4()
+    user_id = str(uuid4())  # Convert to string
 
     # Mock the exec method on the session
-    mock_exec_result = AsyncMock()
+    mock_exec_result = MagicMock()
     mock_exec_result.all.return_value = []
     mock_session.exec = AsyncMock(return_value=mock_exec_result)
 

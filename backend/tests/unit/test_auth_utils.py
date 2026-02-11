@@ -9,7 +9,7 @@ project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from src.auth.utils import verify_password, get_password_hash, create_access_token, verify_token
+from src.auth.utils import verify_password, hash_password, create_token, verify_token
 
 
 def test_password_hashing():
@@ -17,7 +17,7 @@ def test_password_hashing():
     plain_password = "testpassword123"
 
     # Hash the password
-    hashed = get_password_hash(plain_password)
+    hashed = hash_password(plain_password)
 
     # Verify it's different from the original
     assert hashed != plain_password
@@ -34,7 +34,7 @@ def test_create_and_verify_token():
     payload = {"sub": "123e4567-e89b-12d3-a456-426614174000"}
 
     # Create a token
-    token = create_access_token(data=payload)
+    token = create_token(payload["sub"])
 
     # Verify the token
     decoded_payload = verify_token(token)
@@ -58,13 +58,13 @@ def test_verify_expired_token():
     """Test verifying an expired token"""
     from datetime import datetime, timedelta
     import jwt
-    from src.auth.utils import SECRET_KEY, ALGORITHM
+    from src.auth.config import BETTER_AUTH_SECRET as SECRET_KEY, ALGORITHM
 
     # Create an expired token
     expired_payload = {
         "sub": "123e4567-e89b-12d3-a456-426614174000",
         "exp": datetime.utcnow() - timedelta(seconds=1),  # Expired 1 second ago
-        "iat": datetime.utcnow() - timedelta(hours=1)
+        "iat": datetime.utcnow() - timedelta(hours=1),
     }
 
     expired_token = jwt.encode(expired_payload, SECRET_KEY, algorithm=ALGORITHM)

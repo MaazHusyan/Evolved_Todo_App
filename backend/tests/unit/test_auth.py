@@ -17,7 +17,7 @@ if str(project_root) not in sys.path:
 
 from src.main import app
 from src.models.base import get_async_session, SessionDep, create_db_and_tables
-from src.auth.utils import create_access_token, verify_token
+from src.auth.utils import create_token, verify_token
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -69,7 +69,7 @@ async def test_register_endpoint(client):
     registration_data = {
         "email": "test@example.com",
         "username": "testuser",
-        "password": "testpassword123"
+        "password": "testpassword123",
     }
 
     response = client.post("/api/register", json=registration_data)
@@ -88,17 +88,14 @@ async def test_login_endpoint_success(client):
     registration_data = {
         "email": "login_test@example.com",
         "username": "logintestuser",
-        "password": "testpassword123"
+        "password": "testpassword123",
     }
 
     register_response = client.post("/api/register", json=registration_data)
     assert register_response.status_code == 200
 
     # Now try to login
-    login_data = {
-        "email": "login_test@example.com",
-        "password": "testpassword123"
-    }
+    login_data = {"email": "login_test@example.com", "password": "testpassword123"}
 
     response = client.post("/api/login", json=login_data)
     assert response.status_code == 200
@@ -112,10 +109,7 @@ async def test_login_endpoint_success(client):
 @pytest.mark.asyncio
 async def test_login_endpoint_invalid_credentials(client):
     """Test login with invalid credentials"""
-    login_data = {
-        "email": "nonexistent@example.com",
-        "password": "wrongpassword"
-    }
+    login_data = {"email": "nonexistent@example.com", "password": "wrongpassword"}
 
     response = client.post("/api/login", json=login_data)
     assert response.status_code == 401
@@ -148,7 +142,7 @@ def test_token_verification_utility():
     payload = {"sub": "123e4567-e89b-12d3-a456-426614174000"}
 
     # Create a token
-    token = create_access_token(data=payload)
+    token = create_token(payload["sub"])
     assert token is not None
 
     # Verify the token

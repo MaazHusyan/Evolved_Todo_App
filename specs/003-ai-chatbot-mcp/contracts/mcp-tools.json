@@ -1,0 +1,379 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MCP Tools for Todo Task Management",
+  "description": "Model Context Protocol tool definitions for AI-powered task management",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "add_task",
+      "description": "Create a new todo task for the authenticated user. Extracts task details from natural language and creates a task in the database.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Task title (3-200 characters)",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional detailed description of the task",
+            "maxLength": 2000
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Due date in ISO 8601 format (YYYY-MM-DD). If not specified, task has no due date."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "urgent"],
+            "description": "Task priority level. Defaults to 'medium' if not specified.",
+            "default": "medium"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional tags for categorizing the task (e.g., 'work', 'personal')",
+            "maxItems": 10
+          }
+        },
+        "required": ["title"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the task was created successfully"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the created task"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable confirmation message"
+          }
+        }
+      },
+      "examples": [
+        {
+          "input": {
+            "title": "Buy groceries",
+            "due_date": "2026-02-09",
+            "priority": "medium"
+          },
+          "output": {
+            "success": true,
+            "task_id": "abc-123-def",
+            "message": "Task created: Buy groceries (due 2026-02-09)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "list_tasks",
+      "description": "Retrieve tasks for the authenticated user with optional filtering. Returns tasks sorted by priority and due date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pending", "completed", "all"],
+            "description": "Filter by task status. Defaults to 'pending'.",
+            "default": "pending"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "urgent"],
+            "description": "Filter by priority level. If not specified, returns all priorities."
+          },
+          "due_date": {
+            "type": "string",
+            "enum": ["today", "tomorrow", "this_week", "overdue"],
+            "description": "Filter by due date range. If not specified, returns all tasks."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by tags. Returns tasks matching any of the specified tags."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Maximum number of tasks to return. Defaults to 20.",
+            "default": 20
+          }
+        },
+        "required": []
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "due_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of tasks returned"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable summary"
+          }
+        }
+      },
+      "examples": [
+        {
+          "input": {
+            "status": "pending",
+            "due_date": "today"
+          },
+          "output": {
+            "success": true,
+            "tasks": [
+              {
+                "id": "abc-123",
+                "title": "Buy groceries",
+                "due_date": "2026-02-08",
+                "priority": "medium",
+                "status": "pending"
+              }
+            ],
+            "count": 1,
+            "message": "Found 1 task due today"
+          }
+        }
+      ]
+    },
+    {
+      "name": "complete_task",
+      "description": "Mark a task as completed. The task remains in the database but its status is changed to 'completed'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the task to complete"
+          }
+        },
+        "required": ["task_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable confirmation"
+          }
+        }
+      },
+      "examples": [
+        {
+          "input": {
+            "task_id": "abc-123-def"
+          },
+          "output": {
+            "success": true,
+            "task_id": "abc-123-def",
+            "message": "Task completed: Buy groceries"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_task",
+      "description": "Update one or more properties of an existing task. Only specified fields are updated; others remain unchanged.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the task to update"
+          },
+          "title": {
+            "type": "string",
+            "description": "New task title",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "description": "New task description",
+            "maxLength": 2000
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "description": "New due date in ISO 8601 format"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "urgent"],
+            "description": "New priority level"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New tags (replaces existing tags)"
+          }
+        },
+        "required": ["task_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of fields that were updated"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "examples": [
+        {
+          "input": {
+            "task_id": "abc-123-def",
+            "priority": "high",
+            "due_date": "2026-02-10"
+          },
+          "output": {
+            "success": true,
+            "task_id": "abc-123-def",
+            "updated_fields": ["priority", "due_date"],
+            "message": "Task updated: Buy groceries (priority: high, due: 2026-02-10)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "delete_task",
+      "description": "Permanently delete a task from the database. This action cannot be undone.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the task to delete"
+          }
+        },
+        "required": ["task_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "examples": [
+        {
+          "input": {
+            "task_id": "abc-123-def"
+          },
+          "output": {
+            "success": true,
+            "task_id": "abc-123-def",
+            "message": "Task deleted: Buy groceries"
+          }
+        }
+      ]
+    }
+  ],
+  "authentication": {
+    "type": "bearer",
+    "description": "All MCP tool calls require authentication. The user_id is extracted from the validated JWT token and used to filter all database queries."
+  },
+  "errorHandling": {
+    "invalidTaskId": {
+      "code": "TASK_NOT_FOUND",
+      "message": "Task with ID {task_id} not found or does not belong to user"
+    },
+    "unauthorized": {
+      "code": "UNAUTHORIZED",
+      "message": "Invalid or missing authentication token"
+    },
+    "validationError": {
+      "code": "VALIDATION_ERROR",
+      "message": "Invalid input: {details}"
+    },
+    "databaseError": {
+      "code": "DATABASE_ERROR",
+      "message": "Database operation failed. Please try again."
+    }
+  }
+}
