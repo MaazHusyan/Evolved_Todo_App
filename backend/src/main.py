@@ -12,6 +12,7 @@ from .api.logging_config import log_info
 import os
 import time
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 
 # Load environment variables
 load_dotenv()
@@ -21,11 +22,24 @@ ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001"
 ).split(",")
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan event handler for startup and shutdown"""
+    # Startup
+    await create_db_and_tables()
+    log_info("Application started and database initialized")
+    yield
+    # Shutdown (if needed)
+    log_info("Application shutting down")
+
+
 # Create FastAPI app
 app = FastAPI(
     title="Todo API",
     description="REST API for multi-user todo application with authentication and AI chat",
     version="3.0.0",
+    lifespan=lifespan,
 )
 
 
@@ -112,13 +126,6 @@ async def mcp_sse_endpoint(request: Request):
         transport.connect_sse(request.scope, request.receive, request.send),
         media_type="text/event-stream",
     )
-
-
-@app.on_event("startup")
-async def on_startup():
-    """Initialize database tables on startup"""
-    await create_db_and_tables()
-    log_info("Application started and database initialized")
 
 
 @app.get("/")
