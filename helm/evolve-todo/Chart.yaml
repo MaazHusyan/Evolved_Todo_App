@@ -1,0 +1,16 @@
+apiVersion: v2
+name: evolve-todo
+description: A Helm chart for Evolve Todo application with AI chatbot
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - todo
+  - fastapi
+  - nextjs
+  - ai-chatbot
+maintainers:
+  - name: Evolve Todo Team
+home: https://github.com/yourusername/evolve-todo-app
+sources:
+  - https://github.com/yourusername/evolve-todo-app

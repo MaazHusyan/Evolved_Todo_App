@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
-import { LogOut, Plus, User } from "lucide-react";
+import { LogOut, Plus, User, MessageSquare } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export function UserHeaderCard({ user, onLogout, onCreateTask, className }) {
@@ -61,17 +62,31 @@ export function UserHeaderCard({ user, onLogout, onCreateTask, className }) {
               </motion.div>
             </div>
           </div>
-          {/* Create Task Button - Full Width on Mobile */}
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              onClick={onCreateTask}
-              size="lg"
-              className="w-full glass-button bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Create Task
-            </Button>
-          </motion.div>
+          {/* Action Buttons - Full Width on Mobile */}
+          <div className="flex gap-2">
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+              <Link href="/chat" className="block">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full glass dark:glass-dark border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500/50"
+                >
+                  <MessageSquare className="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400" />
+                  AI Chat
+                </Button>
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+              <Button
+                onClick={onCreateTask}
+                size="lg"
+                className="w-full glass-button bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Create Task
+              </Button>
+            </motion.div>
+          </div>
         </div>
 
         {/* Tablet & Desktop Layout: Horizontal */}
@@ -97,6 +112,20 @@ export function UserHeaderCard({ user, onLogout, onCreateTask, className }) {
 
           {/* Actions Section */}
           <div className="flex items-center gap-2 md:gap-3">
+            {/* AI Chat Button */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link href="/chat">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="glass dark:glass-dark border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500/50 px-4 md:px-6"
+                >
+                  <MessageSquare className="h-5 w-5 md:mr-2 text-purple-600 dark:text-purple-400" />
+                  <span className="hidden md:inline">AI Chat</span>
+                </Button>
+              </Link>
+            </motion.div>
+
             {/* Create Task Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button

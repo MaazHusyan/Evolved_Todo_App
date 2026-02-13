@@ -160,10 +160,14 @@ async def update_task(
                 detail="Task not found"
             )
 
-        # Prepare update data and normalize datetime fields
-        update_data = task_request.dict()
-        update_data["start_date"] = normalize_datetime(update_data.get("start_date"))
-        update_data["due_date"] = normalize_datetime(update_data.get("due_date"))
+        # Prepare update data - only include non-None values for partial updates
+        update_data = task_request.model_dump(exclude_unset=True)
+
+        # Normalize datetime fields if they exist
+        if "start_date" in update_data:
+            update_data["start_date"] = normalize_datetime(update_data["start_date"])
+        if "due_date" in update_data:
+            update_data["due_date"] = normalize_datetime(update_data["due_date"])
 
         updated_task = await task_service.update_task(UUID(task_id), user_id, update_data)
 

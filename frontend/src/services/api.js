@@ -1,15 +1,25 @@
 // API service that calls Next.js API proxy routes
-// The proxy handles authentication via Better Auth sessions
+// The proxy handles authentication via JWT tokens
+
+import { getToken } from "@/lib/auth-client";
 
 class ApiService {
   async request(endpoint, options = {}, retries = 3, backoff = 500) {
     // Call the Next.js API proxy (same origin)
     const url = `/api${endpoint}`;
 
+    // Get JWT token from localStorage
+    const token = getToken();
+
     const headers = {
       "Content-Type": "application/json",
       ...options.headers,
     };
+
+    // Add Authorization header if token exists
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const config = {
       ...options,
@@ -31,7 +41,7 @@ class ApiService {
 
       // Handle 401 specifically - do not retry, just redirect
       if (response.status === 401) {
-        console.warn("API Unauthorized (401) - Session might be invalid or expired.");
+        console.warn("API Unauthorized (401) - Token might be invalid or expired.");
         if (typeof window !== "undefined") {
           window.location.href = "/login";
         }

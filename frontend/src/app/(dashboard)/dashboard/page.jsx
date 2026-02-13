@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { api } from "@/services/api";
-import { authClient, clearToken } from "@/lib/auth-client";
+import { getToken, clearToken } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -28,24 +28,37 @@ export default function DashboardPage() {
   const [summaryFilter, setSummaryFilter] = useState("all");
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, action: null, data: null });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   const router = useRouter();
-  const { data: session, isPending } = authClient.useSession();
   const { showCreated, showUpdated, showDeleted, showCompleted, showError } = useTaskNotifications();
 
-  // Redirect if not authenticated
+  // Check authentication on mount
   useEffect(() => {
-    if (!isPending && !session) {
+    const token = getToken();
+    const userData = localStorage.getItem('user');
+
+    if (!token || !userData) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(userData));
+      setIsAuthChecking(false);
+    } catch (error) {
+      console.error("Failed to parse user data", error);
       router.push("/login");
     }
-  }, [session, isPending, router]);
+  }, [router]);
 
   // Fetch tasks on mount
   useEffect(() => {
-    if (session) {
+    if (user) {
       fetchTasks();
     }
-  }, [session]);
+  }, [user]);
 
   const fetchTasks = async () => {
     try {
@@ -261,16 +274,11 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     clearToken();
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/login");
-        },
-      },
-    });
+    localStorage.removeItem('user');
+    router.push("/login");
   };
 
-  if (isPending || !session) {
+  if (isAuthChecking || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <motion.div
@@ -296,10 +304,10 @@ export default function DashboardPage() {
         {/* User Header Card */}
         <UserHeaderCard
           user={{
-            id: session.user.id,
-            name: session.user.name,
-            email: session.user.email,
-            image: session.user.image,
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
           }}
           onLogout={handleLogout}
           onCreateTask={() => setShowTaskModal(true)}

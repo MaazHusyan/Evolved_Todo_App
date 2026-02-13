@@ -5,6 +5,8 @@ import { AnimatedGrid } from "@/components/ui/animated-grid";
 import { GradientOrbs } from "@/components/ui/gradient-orbs";
 import { ParticleBackground } from "@/components/ui/particle-background";
 import { Poppins } from "next/font/google";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { SkipLink } from "@/hooks/useAccessibility";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -21,18 +23,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} font-sans min-h-screen bg-[var(--bg-primary)] text-foreground transition-colors duration-200`} suppressHydrationWarning>
-        <ThemeProvider>
-          {/* Multi-layered background system with proper z-index hierarchy */}
-          <NoiseTexture />
-          <AnimatedGrid />
-          <GradientOrbs />
-          <ParticleBackground />
+        <ErrorBoundary>
+          <SkipLink />
+          <ThemeProvider>
+            {/* Multi-layered background system with proper z-index hierarchy */}
+            <NoiseTexture />
+            <AnimatedGrid />
+            <GradientOrbs />
+            <ParticleBackground />
 
-          {/* Main content with higher z-index */}
-          <div className="relative" style={{ zIndex: 10 }}>
-            {children}
-          </div>
-        </ThemeProvider>
+            {/* Main content with higher z-index */}
+            <div id="main-content" className="relative" style={{ zIndex: 10 }}>
+              {children}
+            </div>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

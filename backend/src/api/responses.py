@@ -46,11 +46,11 @@ class TaskCreateRequest(BaseModel):
     tags: Optional[List[str]] = None
 
 class TaskUpdateRequest(BaseModel):
-    """Task update request model"""
-    title: str
+    """Task update request model - all fields optional for partial updates"""
+    title: Optional[str] = None
     description: Optional[str] = None
     start_date: Optional[datetime] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
-    is_completed: bool
+    is_completed: Optional[bool] = None
     tags: Optional[List[str]] = None

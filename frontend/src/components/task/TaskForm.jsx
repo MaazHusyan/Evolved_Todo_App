@@ -121,24 +121,24 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
+      className="overflow-x-hidden"
     >
-      <Card className={cn("w-full glass dark:glass-dark border-0 shadow-xl", className)}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <Card className={cn("w-full glass dark:glass-dark border-0 shadow-xl overflow-x-hidden", className)}>
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
             <Plus className="h-5 w-5" />
             {initialData?.title ? "Edit Task" : "Create New Task"}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-gray-600 dark:text-gray-400">
             {initialData?.title
               ? "Update your task details below."
               : "Add a new task to your todo list."}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <CardContent className="space-y-5">
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">Task Title *</Label>
+            <Label htmlFor="title" className="text-gray-700 dark:text-gray-300 font-medium">Task Title *</Label>
             <Input
               id="title"
               placeholder="What needs to be done?"
@@ -147,7 +147,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
                 setTitle(e.target.value);
                 if (errors.title) setErrors((prev) => ({ ...prev, title: "" }));
               }}
-              className={errors.title ? "border-red-500" : ""}
+              className={errors.title ? "border-red-500 text-gray-900 placeholder:text-gray-400" : "text-gray-900 placeholder:text-gray-400"}
             />
             {errors.title && (
               <p className="text-sm text-red-500">{errors.title}</p>
@@ -156,20 +156,21 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-gray-700 dark:text-gray-300 font-medium">Description</Label>
             <Textarea
               id="description"
               placeholder="Add more details about your task..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              className="text-gray-900 placeholder:text-gray-400 resize-none"
             />
           </div>
 
           {/* Dates Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="start-date">Start Date & Time</Label>
+              <Label htmlFor="start-date" className="text-gray-700 dark:text-gray-300 font-medium">Start Date & Time</Label>
               <DateTimePicker
                 date={startDate}
                 setDate={setStartDate}
@@ -177,7 +178,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="due-date">Due Date & Time</Label>
+              <Label htmlFor="due-date" className="text-gray-700 dark:text-gray-300 font-medium">Due Date & Time</Label>
               <DateTimePicker
                 date={dueDate}
                 setDate={setDueDate}
@@ -188,9 +189,9 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
 
           {/* Priority */}
           <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
+            <Label htmlFor="priority" className="text-gray-700 dark:text-gray-300 font-medium">Priority</Label>
             <Select value={priority} onValueChange={setPriority}>
-              <SelectTrigger id="priority">
+              <SelectTrigger id="priority" className="text-gray-900">
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
               <SelectContent>
@@ -203,7 +204,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
 
           {/* Tags */}
           <div className="space-y-3">
-            <Label htmlFor="tag-input">Tags</Label>
+            <Label htmlFor="tag-input" className="text-gray-700 dark:text-gray-300 font-medium">Tags</Label>
 
             {/* Tag Input */}
             <div className="flex gap-2">
@@ -213,7 +214,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagInputKeyDown}
-                className="flex-1"
+                className="flex-1 text-gray-900 placeholder:text-gray-400"
               />
               <Button
                 type="button"
@@ -228,7 +229,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
 
             {/* Selected Tags */}
             {selectedTags.length > 0 && (
-              <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-muted/30">
+              <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-gray-100 dark:bg-gray-800/50">
                 {selectedTags.map((tag) => {
                   const color = getTagColor(tag);
                   return (
@@ -252,7 +253,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
 
             {/* Predefined Tags */}
             <div>
-              <p className="text-xs text-muted-foreground mb-2">Quick tags:</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Quick tags:</p>
               <div className="flex flex-wrap gap-2">
                 {PREDEFINED_TAGS.map((tag) => {
                   const isSelected = selectedTags.includes(tag.name);
@@ -261,7 +262,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
                       key={tag.id}
                       variant="outline"
                       className={cn(
-                        "cursor-pointer transition-all hover:scale-105",
+                        "cursor-pointer transition-all hover:scale-105 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300",
                         isSelected && "opacity-50"
                       )}
                       onClick={() => !isSelected && toggleTag(tag.name)}
@@ -275,13 +276,14 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             {onCancel && (
               <Button
                 type="button"
                 variant="outline"
                 onClick={onCancel}
                 disabled={isLoading}
+                className="border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 Cancel
               </Button>
@@ -296,9 +298,8 @@ export function TaskForm({ initialData, onSubmit, onCancel, isLoading = false, c
               )}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }

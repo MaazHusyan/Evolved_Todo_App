@@ -39,27 +39,30 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      await retryAuthOperation(() =>
-        authClient.signUp.email({
-          email,
-          password,
-          name,
-        }, {
-          onResponse: (ctx) => {
-            const token = ctx.response.headers.get("set-auth-token");
-            if (token) {
-              setToken(token);
-            }
-          },
-          onSuccess: () => {
-            router.push("/dashboard");
-          },
-          onError: (ctx) => {
-            // Re-throw to be caught by retry logic or final catch
-            throw ctx.error;
-          },
-        })
-      );
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || data.message || 'Registration failed');
+      }
+
+      if (data.token) {
+        setToken(data.token);
+        // Store user data in localStorage
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+        router.push("/dashboard");
+      } else {
+        throw new Error('No token received from server');
+      }
     } catch (err) {
       setError(err.message || "An unexpected error occurred");
     } finally {

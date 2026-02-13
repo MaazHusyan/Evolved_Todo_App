@@ -106,14 +106,14 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
         onClick={() => setIsOpen(true)}
         className={cn(
           "w-full justify-start text-left font-normal glass-input text-sm sm:text-base",
-          !date && "text-muted-foreground"
+          !date && "text-gray-500 dark:text-gray-400"
         )}
       >
         <CalendarIcon className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
         {date ? (
-          <span className="text-sm sm:text-base">{format(new Date(date), "PPP 'at' h:mm a")}</span>
+          <span className="text-sm sm:text-base text-gray-900 dark:text-white">{format(new Date(date), "PPP 'at' h:mm a")}</span>
         ) : (
-          <span className="text-sm sm:text-base">{placeholder}</span>
+          <span className="text-sm sm:text-base text-gray-500 dark:text-gray-400">{placeholder}</span>
         )}
       </Button>
 
@@ -127,7 +127,7 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             />
 
             {/* Modal Content */}
@@ -139,10 +139,10 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                 transition={{ duration: 0.2 }}
                 className="w-full max-w-sm pointer-events-auto"
               >
-                <div className="glass dark:glass-dark rounded-xl sm:rounded-2xl shadow-2xl border-0">
+                <div className="glass dark:glass-dark rounded-2xl shadow-2xl border-0 overflow-hidden">
                   {/* Header */}
-                  <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                  <div className="flex items-center justify-between p-4 sm:p-4 border-b border-gray-200/50 dark:border-gray-700/50">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                       Select Date & Time
                     </h3>
                     <Button
@@ -150,25 +150,25 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                       onClick={() => setIsOpen(false)}
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      className="h-8 w-8 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                     </Button>
                   </div>
 
                   {/* Calendar */}
-                  <div className="p-2 sm:p-3">
+                  <div className="p-4">
                     <Calendar
                       mode="single"
                       selected={selectedDate}
                       onSelect={handleDateSelect}
                       initialFocus
-                      className="rounded-lg scale-90 sm:scale-100"
+                      className="[&_.rdp-day_selected]:bg-blue-600 [&_.rdp-day_selected]:text-white [&_.rdp-day_selected:hover]:bg-blue-700 [&_.rdp-day]:text-gray-900 dark:[&_.rdp-day]:text-white [&_.rdp-day:hover]:bg-gray-100 dark:[&_.rdp-day:hover]:bg-gray-800 [&_.rdp-caption_label]:text-gray-900 dark:[&_.rdp-caption_label]:text-white [&_.rdp-head_cell]:text-gray-600 dark:[&_.rdp-head_cell]:text-gray-400"
                     />
                   </div>
 
                   {/* Time Picker */}
-                  <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                  <div className="p-4 sm:p-5 border-t border-gray-200/50 dark:border-gray-700/50 space-y-4">
                     <div className="flex items-center justify-center gap-2 sm:gap-3">
                       {/* Hours */}
                       <div className="flex flex-col items-center gap-1">
@@ -177,11 +177,11 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                           variant="ghost"
                           size="icon"
                           onClick={incrementHours}
-                          className="h-7 w-7 hover:bg-blue-500/10"
+                          className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg"
                         >
-                          <ChevronUp className="h-4 w-4" />
+                          <ChevronUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         </Button>
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-xl sm:text-2xl font-bold bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-gray-300 dark:border-gray-600">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center text-2xl sm:text-3xl font-bold bg-gray-100 dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white shadow-inner">
                           {hours.toString().padStart(2, "0")}
                         </div>
                         <Button
@@ -189,15 +189,15 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                           variant="ghost"
                           size="icon"
                           onClick={decrementHours}
-                          className="h-7 w-7 hover:bg-blue-500/10"
+                          className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg"
                         >
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         </Button>
-                        <span className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-semibold">Hours</span>
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Hours</span>
                       </div>
 
                       {/* Separator */}
-                      <div className="text-2xl sm:text-3xl font-bold pb-6 text-gray-700 dark:text-gray-300">:</div>
+                      <div className="text-3xl sm:text-4xl font-bold text-gray-400 dark:text-gray-500 pb-8">:</div>
 
                       {/* Minutes */}
                       <div className="flex flex-col items-center gap-1">
@@ -206,11 +206,11 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                           variant="ghost"
                           size="icon"
                           onClick={incrementMinutes}
-                          className="h-7 w-7 hover:bg-blue-500/10"
+                          className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg"
                         >
-                          <ChevronUp className="h-4 w-4" />
+                          <ChevronUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         </Button>
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-xl sm:text-2xl font-bold bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-gray-300 dark:border-gray-600">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center text-2xl sm:text-3xl font-bold bg-gray-100 dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white shadow-inner">
                           {minutes.toString().padStart(2, "0")}
                         </div>
                         <Button
@@ -218,22 +218,22 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                           variant="ghost"
                           size="icon"
                           onClick={decrementMinutes}
-                          className="h-7 w-7 hover:bg-blue-500/10"
+                          className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg"
                         >
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         </Button>
-                        <span className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-semibold">Minutes</span>
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Minutes</span>
                       </div>
 
                       {/* AM/PM Toggle */}
-                      <div className="flex flex-col items-center gap-1 pb-6">
+                      <div className="flex flex-col items-center gap-1 pb-6 ml-2">
                         <Button
                           type="button"
                           onClick={togglePeriod}
                           className={cn(
-                            "w-12 h-12 sm:w-14 sm:h-14 text-base sm:text-lg font-bold transition-all rounded-lg",
+                            "w-12 h-10 sm:w-14 sm:h-12 text-sm sm:text-lg font-bold transition-all rounded-xl",
                             period === "AM"
-                              ? "bg-blue-600 hover:bg-blue-700 text-white ring-2 ring-blue-400"
+                              ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30"
                               : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
                           )}
                         >
@@ -243,9 +243,9 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                           type="button"
                           onClick={togglePeriod}
                           className={cn(
-                            "w-12 h-12 sm:w-14 sm:h-14 text-base sm:text-lg font-bold transition-all rounded-lg",
+                            "w-12 h-10 sm:w-14 sm:h-12 text-sm sm:text-lg font-bold transition-all rounded-xl mt-1",
                             period === "PM"
-                              ? "bg-blue-600 hover:bg-blue-700 text-white ring-2 ring-blue-400"
+                              ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30"
                               : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
                           )}
                         >
@@ -256,23 +256,23 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
 
                     {/* Preview */}
                     {selectedDate && (
-                      <div className="text-center text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 sm:p-2.5 border border-blue-200 dark:border-blue-800">
-                        <p className="font-semibold text-xs sm:text-sm">
+                      <div className="text-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-3 sm:p-4 border border-blue-200/50 dark:border-blue-800/30">
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                           {format(selectedDate, "EEEE, MMMM d, yyyy")}
                         </p>
-                        <p className="text-base sm:text-lg font-bold mt-0.5 text-blue-700 dark:text-blue-300">
+                        <p className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400 mt-1">
                           {hours.toString().padStart(2, "0")}:{minutes.toString().padStart(2, "0")} {period}
                         </p>
                       </div>
                     )}
 
                     {/* Action Buttons */}
-                    <div className="flex gap-2 pt-1">
+                    <div className="flex gap-2 pt-2">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={handleSetNow}
-                        className="flex-1 text-xs sm:text-sm font-semibold h-9 sm:h-10"
+                        className="flex-1 h-10 sm:h-11 font-medium border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                       >
                         Now
                       </Button>
@@ -280,7 +280,7 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                         type="button"
                         variant="outline"
                         onClick={handleClear}
-                        className="flex-1 text-xs sm:text-sm font-semibold h-9 sm:h-10"
+                        className="flex-1 h-10 sm:h-11 font-medium border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                       >
                         Clear
                       </Button>
@@ -288,7 +288,7 @@ export function DateTimePicker({ date, setDate, placeholder = "Pick a date and t
                         type="button"
                         onClick={handleApply}
                         disabled={!selectedDate}
-                        className="flex-1 text-xs sm:text-sm font-semibold h-9 sm:h-10 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                        className="flex-1 h-10 sm:h-11 font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg shadow-blue-500/25"
                       >
                         Apply
                       </Button>

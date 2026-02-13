@@ -15,7 +15,7 @@ if str(project_root) not in sys.path:
 
 from src.services.user_service import UserService
 from src.models.user import User, UserRegistration
-from src.auth.utils import get_password_hash
+from src.auth.utils import hash_password
 
 
 @pytest.fixture
@@ -40,17 +40,14 @@ async def test_create_user(mock_session):
         password="testpassword"
     )
 
-    # Mock the exec method to return None (no existing user)
-    mock_session.exec.return_value.first.return_value = None
-
     # Call the method
     result = await user_service.create_user(user_registration)
 
     # Assertions
     assert result.email == "test@example.com"
-    assert result.username == "testuser"
+    assert result.name == "testuser"  # username maps to name field
     # Check that the password was hashed
-    assert result.hashed_password != "testpassword"
+    assert result.password_hash != "testpassword"
 
     # Verify session methods were called
     mock_session.add.assert_called_once()
@@ -65,10 +62,12 @@ async def test_get_user_by_email(mock_session):
 
     # Create a mock user
     mock_user = User(
-        id=uuid.uuid4(),
+        id=str(uuid.uuid4()),
         email="test@example.com",
-        username="testuser",
-        hashed_password=get_password_hash("testpassword")
+        name="testuser",
+        password_hash=hash_password("testpassword"),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
     )
 
     # Mock the exec method to return the user
@@ -91,10 +90,12 @@ async def test_get_user_by_username(mock_session):
 
     # Create a mock user
     mock_user = User(
-        id=uuid.uuid4(),
+        id=str(uuid.uuid4()),
         email="test@example.com",
-        username="testuser",
-        hashed_password=get_password_hash("testpassword")
+        name="testuser",
+        password_hash=hash_password("testpassword"),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
     )
 
     # Mock the exec method to return the user
@@ -107,7 +108,7 @@ async def test_get_user_by_username(mock_session):
 
     # Assertions
     assert result is not None
-    assert result.username == "testuser"
+    assert result.name == "testuser"
 
 
 @pytest.mark.asyncio
@@ -116,7 +117,7 @@ async def test_verify_password():
     user_service = UserService(None)  # Session not needed for this method
 
     plain_password = "testpassword"
-    hashed_password = get_password_hash(plain_password)
+    hashed_password = hash_password(plain_password)
 
     # Correct password should return True
     assert user_service.verify_password(plain_password, hashed_password) is True
@@ -130,14 +131,16 @@ async def test_get_user_by_id(mock_session):
     """Test getting a user by ID"""
     user_service = UserService(mock_session)
 
-    user_id = uuid.uuid4()
+    user_id = str(uuid.uuid4())
 
     # Create a mock user
     mock_user = User(
         id=user_id,
         email="test@example.com",
-        username="testuser",
-        hashed_password=get_password_hash("testpassword")
+        name="testuser",
+        password_hash=hash_password("testpassword"),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
     )
 
     # Mock the exec method to return the user

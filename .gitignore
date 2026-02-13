@@ -105,3 +105,17 @@ uv.lock
 tasks.json
 /*.lock
 /*.toml
+# Agents skills - may contain example secrets in documentation
+.agents/skills/**/references/
+.agents/skills/**/examples/
+.agents/skills/**/*.md
+
+# Kubernetes
+*.secret.yaml
+secrets/
+.kube/
+kubeconfig*
+*.key
+*.crt
+minikube-linux-amd64
+kubectl
