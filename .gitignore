@@ -109,3 +109,13 @@ tasks.json
 .agents/skills/**/references/
 .agents/skills/**/examples/
 .agents/skills/**/*.md
+
+# Kubernetes
+*.secret.yaml
+secrets/
+.kube/
+kubeconfig*
+*.key
+*.crt
+minikube-linux-amd64
+kubectl

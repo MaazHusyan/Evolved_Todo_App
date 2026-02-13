@@ -1,24 +1,52 @@
-__pycache__
-*.pyc
-*.pyo
-*.pyd
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
 .Python
-env/
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
 venv/
-.env
-.venv
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
 .coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git
+htmlcov/
+.tox/
+tests/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
 .gitignore
-.mypy_cache
-.pytest_cache
-.hypothesize
+
+# Documentation
+*.md
+docs/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak

@@ -17,30 +17,64 @@ class AgentsConfig:
 
     def __init__(self):
         """Initialize Agents SDK configuration."""
+        # Groq configuration (priority - best free tier)
+        self.groq_api_key = os.getenv("GROQ_API_KEY")
+        self.groq_model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+        self.groq_base_url = "https://api.groq.com/openai/v1"
+
+        # Gemini configuration
         self.gemini_api_key = os.getenv("GEMINI_API_KEY")
         self.gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-exp")
         self.gemini_base_url = (
             "https://generativelanguage.googleapis.com/v1beta/openai/"
         )
 
+        # OpenRouter configuration (fallback)
         self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
         self.openrouter_model = os.getenv(
             "OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"
         )
 
         self.mcp_server_url = os.getenv(
-            "MCP_SERVER_URL", "http://localhost:8001/api/mcp"
+            "MCP_SERVER_URL", "http://localhost:8001/mcp/sse"
         )
         self.mcp_timeout = int(os.getenv("MCP_TIMEOUT", "30"))
 
-        if self.gemini_api_key:
+        # Priority: Groq > Gemini > OpenRouter
+        if self.groq_api_key:
+            self._setup_groq()
+        elif self.gemini_api_key:
             self._setup_gemini()
         elif self.openrouter_api_key:
             self._setup_openrouter()
         else:
             raise ValueError(
-                "No API key found. Please add GEMINI_API_KEY or OPENROUTER_API_KEY to your .env file."
+                "No API key found. Please add GROQ_API_KEY, GEMINI_API_KEY, or OPENROUTER_API_KEY to your .env file."
             )
+
+    def _setup_groq(self):
+        """Set up Groq API configuration."""
+        self.api_key = self.groq_api_key
+        self.base_url = self.groq_base_url
+        self.model_name = self.groq_model
+        self.provider = "groq"
+
+        self.external_provider = AsyncOpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+        )
+
+        self.model = OpenAIChatCompletionsModel(
+            openai_client=self.external_provider,
+            model=self.model_name,
+        )
+
+        self.config = RunConfig(
+            model=self.model,
+            model_provider=self.external_provider,
+            tracing_disabled=True,
+        )
+        print(f"✓ Using Groq model: {self.model_name}")
 
     def _setup_gemini(self):
         """Set up Gemini API configuration."""

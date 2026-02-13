@@ -222,11 +222,11 @@ async def send_message(
                     detail="Database temporarily unavailable. Please try again in a moment.",
                 )
 
-        # Step 2: AI API call using OpenAI Agents SDK with Gemini
+        # Step 2: AI API call using Groq-compatible implementation
         try:
-            from ..ai.agent_sdk import process_message_sdk
+            from ..ai.agent_sdk_groq_fix import process_message_groq
 
-            assistant_content = await process_message_sdk(
+            assistant_content = await process_message_groq(
                 user_id=user_id,
                 message=request.message,
                 conversation_history=messages_history,
@@ -355,11 +355,11 @@ async def chat_stream_generator(
         # Add user message to history
         messages_history.append({"role": "user", "content": message})
 
-        # Stream response using SDK
-        from ..ai.agent_sdk import stream_message_sdk
+        # Stream response using Groq-compatible implementation
+        from ..ai.agent_sdk_groq_fix import stream_message_groq
 
         full_response = ""
-        async for chunk in stream_message_sdk(user_id, message, messages_history):
+        async for chunk in stream_message_groq(user_id, message, messages_history):
             full_response += chunk
             yield f"data: {chunk}\n\n"
 

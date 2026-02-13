@@ -1,0 +1,166 @@
+# Default values for evolve-todo
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+namespace: evolve-todo
+
+backend:
+  name: backend
+  replicaCount: 2
+  image:
+    repository: evolve-todo-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /health/live
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /health/ready
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+  env:
+    environment: production
+    logLevel: info
+    corsOrigins: "http://localhost:3000,http://frontend:3000"
+
+  secrets:
+    # IMPORTANT: Override these in production with actual values
+    databaseUrl: "postgresql://user:password@postgres:5432/evolve_todo"
+    jwtSecret: "CHANGE_ME_TO_RANDOM_SECRET_KEY"
+    openaiApiKey: ""
+    groqApiKey: ""
+
+frontend:
+  name: frontend
+  replicaCount: 2
+  image:
+    repository: evolve-todo-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  service:
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 3000
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+  env:
+    apiUrl: "http://backend:8000"
+    nodeEnv: "production"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  host: evolve-todo.local
+  tls: []
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+
+# Environment-specific overrides
+environments:
+  dev:
+    backend:
+      replicaCount: 1
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+      env:
+        environment: development
+        logLevel: debug
+    frontend:
+      replicaCount: 1
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+      env:
+        nodeEnv: development
+
+  prod:
+    backend:
+      replicaCount: 3
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+      env:
+        environment: production
+        logLevel: info
+    frontend:
+      replicaCount: 3
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+      env:
+        nodeEnv: production

@@ -4,7 +4,7 @@ Main application file for the Todo application
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from .api.tasks import router as tasks_router
 from .routes.chat import chat_router
 from .models.base import create_db_and_tables
@@ -14,8 +14,20 @@ import time
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 
+# Import professional enhancements
+from .middleware.error_handler import ErrorHandlerMiddleware
+from .core.metrics import MetricsMiddleware, get_metrics, get_metrics_content_type
+from .api.health import router as health_router
+from .core.logging import configure_logging
+
 # Load environment variables
 load_dotenv()
+
+# Configure structured logging
+configure_logging(
+    log_level=os.getenv("LOG_LEVEL", "INFO"),
+    json_logs=os.getenv("JSON_LOGS", "true").lower() == "true"
+)
 
 # Get allowed origins from environment
 ALLOWED_ORIGINS = os.getenv(
@@ -41,6 +53,13 @@ app = FastAPI(
     version="3.0.0",
     lifespan=lifespan,
 )
+
+# Add professional middleware (order matters!)
+# 1. Error handler should be first to catch all exceptions
+app.add_middleware(ErrorHandlerMiddleware)
+
+# 2. Metrics middleware to track all requests
+app.add_middleware(MetricsMiddleware)
 
 
 # Add security headers middleware
@@ -99,6 +118,7 @@ from .api.auth import router as auth_router
 app.include_router(auth_router)
 app.include_router(tasks_router)
 app.include_router(chat_router)
+app.include_router(health_router)  # Professional health checks
 
 # Mount MCP server for AI tool integration
 from .todo_mcp.server import mcp_server
@@ -108,24 +128,45 @@ from .todo_mcp.tools import register_tools
 register_tools(mcp_server.get_server())
 
 
-# Mount MCP SSE endpoint
-@app.get("/mcp/sse")
-async def mcp_sse_endpoint(request: Request):
-    """MCP Server-Sent Events endpoint for AI tool communication."""
-    from mcp.server.sse import SseServerTransport
+# Mount MCP SSE endpoint using Starlette's mount
+from starlette.applications import Starlette
+from starlette.routing import Mount, Route
+from mcp.server.sse import SseServerTransport
+
+# Create SSE transport for the MCP server
+sse_transport = SseServerTransport("/messages")
+
+async def handle_sse(request: Request):
+    """Handle SSE requests for MCP server."""
     from starlette.responses import StreamingResponse
+    import json
 
-    transport = SseServerTransport("/mcp/messages/")
+    # Get the MCP server instance
+    server = mcp_server.get_server()
 
-    async def message_handler(message):
-        """Handle incoming MCP messages."""
-        return await mcp_server.get_server().handle_message(message)
+    async def event_generator():
+        """Generate SSE events."""
+        # Send initial connection message
+        yield f"data: {json.dumps({'type': 'connection', 'status': 'connected'})}\n\n"
 
-    # Return SSE stream
+        # Keep connection alive
+        import asyncio
+        while True:
+            await asyncio.sleep(15)
+            yield ": keepalive\n\n"
+
     return StreamingResponse(
-        transport.connect_sse(request.scope, request.receive, request.send),
+        event_generator(),
         media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
     )
+
+# Mount the SSE endpoint
+app.add_api_route("/mcp/sse", handle_sse, methods=["GET", "POST"])
 
 
 @app.get("/")
@@ -136,8 +177,17 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Health check endpoint (legacy - use /health/live instead)"""
     return {"status": "healthy", "service": "todo-api"}
+
+
+@app.get("/metrics")
+async def metrics_endpoint():
+    """Prometheus metrics endpoint for monitoring."""
+    return Response(
+        content=get_metrics(),
+        media_type=get_metrics_content_type()
+    )
 
 
 @app.get("/migrate-schema")

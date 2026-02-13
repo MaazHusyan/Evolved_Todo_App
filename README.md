@@ -40,6 +40,9 @@ A decoupled, asynchronous Todo CLI engine built with Python 3.13, Typer, and Pyd
 ### Phase II - Web Application ✅
 Full-stack web application with Next.js 16 frontend, FastAPI backend, and PostgreSQL database. Features next-generation glassmorphism UI with animated backgrounds, mobile-first responsive design, and advanced task management capabilities.
 
+### Phase III - AI-Powered Chat ✅
+Conversational task management powered by OpenAI GPT-4 and Model Context Protocol (MCP). Manage tasks through natural language conversation with an AI assistant that understands context and intent.
+
 ## 🏗️ Architecture
 
 ### Overall Design
@@ -169,6 +172,30 @@ uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
   - Task grid with responsive columns
   - User profile with avatar
 
+### AI Chat Features (Phase III)
+- ✅ **Natural Language Interface**: Manage tasks through conversation
+- ✅ **AI-Powered Assistant**: OpenAI GPT-4 with context awareness
+- ✅ **MCP Integration**: Model Context Protocol for tool calling
+- ✅ **Conversational Task Management**:
+  - Create tasks with natural language ("Add a task to buy groceries tomorrow")
+  - List tasks with filters ("Show me my urgent tasks")
+  - Update tasks using context ("Mark the first one done")
+  - Complete and delete tasks conversationally
+- ✅ **Context Awareness**:
+  - Maintains conversation history (50 messages)
+  - Resolves references ("the first one", "that task")
+  - Multi-turn conversations with context
+- ✅ **Smart Features**:
+  - Date recognition (tomorrow, next week, Friday)
+  - Priority detection (urgent, high, low)
+  - Tag extraction from natural language
+  - Error handling with helpful suggestions
+- ✅ **Performance**:
+  - P95 response time < 2 seconds
+  - Rate limiting (60 requests/minute)
+  - Retry logic for database operations
+  - Real-time streaming responses (SSE)
+
 ## 📱 Web Application Usage
 
 ### Getting Started
@@ -211,6 +238,42 @@ uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
 
 - Click the theme toggle button in the navigation bar
 - Preference is saved automatically
+
+### Using AI Chat (Phase III)
+
+**Access the Chat**
+1. Click the "💬 Chat" link in the navigation menu
+2. Start typing your message in natural language
+
+**Example Conversations**
+
+Create a task:
+```
+You: "Add a task to buy groceries tomorrow"
+AI: "I've added 'Buy groceries' to your tasks, due tomorrow."
+```
+
+List tasks:
+```
+You: "What do I need to do today?"
+AI: "You have 3 tasks due today: 1) Buy groceries 2) Call dentist 3) Submit report"
+```
+
+Complete a task:
+```
+You: "Mark the first one done"
+AI: "Great! I've marked 'Buy groceries' as complete."
+```
+
+**Tips**
+- Use natural language - no special commands needed
+- The AI remembers context from previous messages
+- Reference tasks by position ("the first one") or name
+- Be specific with dates for better accuracy
+
+**Documentation**
+- Full API docs: `specs/003-ai-chatbot-mcp/api-documentation.md`
+- User guide: `specs/003-ai-chatbot-mcp/user-guide.md`
 
 ## Evolve Todo App - CLI User Guide
 
@@ -269,6 +332,109 @@ Inside the shell, use add, list, or help.
 ---
 
 ```
+### Phase IV - Kubernetes Deployment ✅
+Production-ready Kubernetes deployment with Docker containerization, Helm charts, and automation scripts. Deploy to local Minikube or cloud providers (AWS EKS, Google GKE, Azure AKS).
+
+## 🐳 Kubernetes Deployment
+
+### Quick Start
+
+Deploy the entire application to a local Kubernetes cluster:
+
+```bash
+bash scripts/dev/quick-start.sh
+```
+
+This will:
+1. Install required tools (kubectl, minikube, helm)
+2. Setup Minikube cluster
+3. Build Docker images
+4. Deploy with Helm
+5. Configure ingress
+
+### Manual Deployment
+
+#### 1. Build Docker Images
+
+```bash
+bash scripts/docker/build-all.sh
+```
+
+Images created:
+- `evolve-todo-backend:latest` (84MB)
+- `evolve-todo-frontend:latest` (228MB)
+
+#### 2. Setup Minikube
+
+```bash
+bash scripts/setup/setup-minikube.sh
+```
+
+#### 3. Deploy with Helm
+
+```bash
+bash scripts/k8s/deploy-helm.sh
+```
+
+Or with Kustomize:
+
+```bash
+bash scripts/k8s/deploy-kustomize.sh dev
+```
+
+#### 4. Access the Application
+
+**Using Ingress:**
+```bash
+# Add to /etc/hosts
+echo "127.0.0.1 evolve-todo.local" | sudo tee -a /etc/hosts
+
+# Start tunnel
+minikube tunnel
+
+# Visit
+http://evolve-todo.local
+```
+
+**Using Port Forwarding:**
+```bash
+kubectl port-forward -n evolve-todo svc/evolve-todo-frontend 3000:3000
+kubectl port-forward -n evolve-todo svc/evolve-todo-backend 8000:8000
+```
+
+### Deployment Options
+
+- **Kustomize**: Environment-specific overlays (dev/prod)
+- **Helm**: Parameterized charts with values files
+- **Cloud Providers**: AWS EKS, Google GKE, Azure AKS
+
+### Documentation
+
+- [Deployment Guide](docs/deployment-guide.md) - Complete deployment instructions
+- [Troubleshooting Guide](docs/troubleshooting.md) - Common issues and solutions
+- [AI Architecture](docs/ai-tools/architecture.md) - AI chatbot architecture
+- [MCP Integration](docs/ai-tools/mcp-integration.md) - Model Context Protocol guide
+
+### Automation Scripts
+
+All scripts are located in the `scripts/` directory:
+
+**Setup:**
+- `scripts/setup/install-tools.sh` - Install kubectl, minikube, helm
+- `scripts/setup/setup-minikube.sh` - Configure Minikube cluster
+
+**Docker:**
+- `scripts/docker/build-all.sh` - Build all Docker images
+
+**Kubernetes:**
+- `scripts/k8s/deploy-helm.sh` - Deploy with Helm
+- `scripts/k8s/deploy-kustomize.sh` - Deploy with Kustomize
+- `scripts/k8s/logs.sh` - View application logs
+- `scripts/k8s/cleanup.sh` - Remove all resources
+
+**Development:**
+- `scripts/dev/quick-start.sh` - One-command setup
+
 ## Testing
 
 Run the test suite:

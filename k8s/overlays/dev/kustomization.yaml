@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: evolve-todo-dev
+
+namePrefix: dev-
+
+bases:
+  - ../../base
+
+patchesStrategicMerge:
+  - backend-deployment-patch.yaml
+  - frontend-deployment-patch.yaml
+
+configMapGenerator:
+  - name: backend-config
+    behavior: merge
+    literals:
+      - environment=development
+      - log-level=debug
+  - name: frontend-config
+    behavior: merge
+    literals:
+      - node-env=development
+
+replicas:
+  - name: backend
+    count: 1
+  - name: frontend
+    count: 1
